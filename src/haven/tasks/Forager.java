@@ -45,8 +45,9 @@ public class Forager extends FsmTask {
                     }
                 });
             } else {
-                if (window == null)
-                    stop("Nothing to pick nearby");
+                if (window == null) {
+                    stop();
+                }
                 else
                     stop();
             }

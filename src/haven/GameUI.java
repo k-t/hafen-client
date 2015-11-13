@@ -939,17 +939,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
             ui.sess.glob.map.rebuild();
             return true;
         } else if (keycode == KeyEvent.VK_Q && ev.getModifiers() == 0) {
-            // get all forageables from config
-            List<String> names = new ArrayList<String>();
-            for (CustomIconGroup group : ui.sess.glob.icons.config.groups) {
-                if ("Forageables".equals(group.name)) {
-                    for (CustomIconMatch match : group.matches)
-                        if (match.show)
-                            names.add(match.value);
-                    break;
-                }
-            }
-            tasks.add(new Forager(11 * Config.autopickRadius.get(), 1, names.toArray(new String[names.size()])));
+			ContextTaskFinder.findTask(tasks, ui);
             return true;
         } else if (keycode == KeyEvent.VK_W && ev.getModifiers() == 0) {
             tasks.add(new Drunkard());
