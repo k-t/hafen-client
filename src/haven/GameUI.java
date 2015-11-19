@@ -26,6 +26,7 @@
 
 package haven;
 
+import java.awt.event.InputEvent;
 import java.awt.image.BufferedImage;
 import haven.minimap.CustomIconGroup;
 import haven.minimap.CustomIconMatch;
@@ -875,11 +876,17 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	    return(true);
 	} else if (key != 0) {
         boolean alt = ev.isAltDown();
+		boolean ctrl = ev.isControlDown();
         int keycode = ev.getKeyCode();
-        if (alt && keycode >= KeyEvent.VK_0 && keycode <= KeyEvent.VK_9) {
-            beltwdg.setCurrentBelt(Utils.floormod(keycode - KeyEvent.VK_0 - 1, 10));
+
+         if (alt && keycode >= KeyEvent.VK_0 && keycode <= KeyEvent.VK_9) {
+			 tasks.add(new MileStoneTask(Utils.floormod(keycode - KeyEvent.VK_0 - 1, 10)));
+			//beltwdg.setCurrentBelt(Utils.floormod(keycode - KeyEvent.VK_0 - 1, 10));
             return true;
-        } else if (alt && keycode == KeyEvent.VK_S) {
+        } else if (ev.getModifiers() == InputEvent.CTRL_DOWN_MASK && keycode >= KeyEvent.VK_1 && keycode <= KeyEvent.VK_4) {
+			 tasks.add(new MileStoneTask(Utils.floormod(keycode - KeyEvent.VK_0 - 1, 10)));
+			 return true;
+		 } else if (alt && keycode == KeyEvent.VK_S) {
             studywnd.show(!studywnd.visible);
             if (studywnd.visible)
                 studywnd.raise();
@@ -939,18 +946,14 @@ public class GameUI extends ConsoleHost implements Console.Directory {
             ui.sess.glob.map.rebuild();
             return true;
         } else if (keycode == KeyEvent.VK_Q && ev.getModifiers() == 0) {
-            // get all forageables from config
-            List<String> names = new ArrayList<String>();
-            for (CustomIconGroup group : ui.sess.glob.icons.config.groups) {
-                if ("Forageables".equals(group.name)) {
-                    for (CustomIconMatch match : group.matches)
-                        if (match.show)
-                            names.add(match.value);
-                    break;
-                }
-            }
-            tasks.add(new Forager(11 * Config.autopickRadius.get(), 1, names.toArray(new String[names.size()])));
+			ContextTaskFinder.checkForageables(tasks, ui);
             return true;
+		} else if (keycode == KeyEvent.VK_R && ev.getModifiers() == 0) {
+			ContextTaskFinder.findHandTask(tasks, ui);
+			return true;
+		} else if (keycode == KeyEvent.VK_F && ev.getModifiers() == 0) {
+			ContextTaskFinder.findBuilding(tasks, ui);
+			return true;
         } else if (keycode == KeyEvent.VK_W && ev.getModifiers() == 0) {
             tasks.add(new Drunkard());
             return true;
@@ -964,6 +967,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
             Config.showGobPaths.set(!Config.showGobPaths.get());
             return true;
         }
+
     }
 	return(super.globtype(key, ev));
     }

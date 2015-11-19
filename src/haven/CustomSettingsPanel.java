@@ -22,6 +22,8 @@ public class CustomSettingsPanel extends OptWnd.Panel {
         categoryList.add(new Category(0, "Tools", null));
         categoryList.add(new Category(1, "Autopick", createAutopick()));
         categoryList.add(new Category(1, "Autostudy", createAutostudy()));
+        categoryList.add(new Category(0, "Special Hotkeys", createHotkeys()));
+
 
         for (Category category : categoryList.categories) {
             if (category.widget != null) {
@@ -243,7 +245,39 @@ public class CustomSettingsPanel extends OptWnd.Panel {
         panel.pack();
         return panel;
     }
-
+    private static Widget createHotkeys() {
+        Widget panel = new Widget();
+        panel.setfocusctl(true);
+        int y = 0;
+        panel.add(new Label("R"), new Coord(0, y));
+        y += 20;
+        panel.add(new Label("Tries to following items if they are in the cursor or hidden handslot(E)"), new Coord(10, y));
+        y += 20;
+        panel.add(new Label("Unlit torch: Lights unlit torch on campfire if available"), new Coord(10, y));
+        y += 20;
+        panel.add(new Label("Lit torch: Lights fueled buildings (smelter, ovens, kilns etc)"), new Coord(10, y));
+        y += 20;
+        panel.add(new Label("(Most) watercontainers: Fills it on a nearby barrel or dumps content into barrel"), new Coord(10, y));
+        y += 20;
+        panel.add(new Label("Clover: Feeds it to horse, auroch, ram or boar. An additional R click next to a horse will giddyup"), new Coord(10, y));
+        y += 40;
+        panel.add(new Label("F"), new Coord(0, y));
+        y += 20;
+        panel.add(new Label("Interactions with buildings"), new Coord(10, y));
+        y += 20;
+        panel.add(new Label("Tries to harvest a dreamcatcher"), new Coord(10, y));
+        y += 20;
+        panel.add(new Label("Opens or closes a fence, palisade, or brickwall gate"), new Coord(10, y));
+        y += 20;
+        panel.add(new Label("Activates roadsign and milestone flower menu for easier travelling"), new Coord(10, y));
+        y += 40;
+        panel.add(new Label("CTRL + 1, 2, 3 or 4"), new Coord(0, y));
+        y += 20;
+        panel.add(new Label("When next to a road sign or milestone, will use the road assigned to the slot. If no such road exists" +
+                "- a road sign has only one road while a milestone can have less than four- nothing happens."), new Coord(10, y));
+        panel.pack();
+        return panel;
+    }
     private static class Frame extends Widget {
         private static final IBox box = new IBox("gfx/hud/tab", "tl", "tr", "bl", "br", "extvl", "extvr", "extht", "exthb");
         private static final Coord margin = new Coord(10, 10);
