@@ -32,6 +32,7 @@ import haven.combat.CombatHelper;
 import java.util.*;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
+import java.text.DecimalFormat;
 
 public class Fightsess extends Widget {
     public static final Tex lframe = Resource.loadtex("gfx/hud/combat/lframe");
@@ -119,6 +120,9 @@ public class Fightsess extends Widget {
 	    g.chcolor(255, 0, 128, 255);
 	    g.frect(pcc.add(-w, 20), new Coord(w * 2, 15));
 	    g.chcolor();
+        double cc = (fv.atkct - now);
+        DecimalFormat df = new DecimalFormat("#.#");
+        g.astext(df.format(cc) + "s", pcc.add(11, 35), 1, 1, Color.WHITE, Color.BLACK);
 	}
 	Coord ca = pcc.add(-(actions.length * actpitch) / 2, 45);
 	for(int i = 0; i < actions.length; i++) {
@@ -128,6 +132,9 @@ public class Fightsess extends Widget {
 		    Tex img = act.get().layer(Resource.imgc).tex();
 		    g.image(img, ca);
 		    g.image(dyn[i]?lframe:Buff.frame, ca.sub(Buff.imgoff));
+            String hotkeyText;
+            hotkeyText = ""+(i+1);
+            g.astext(hotkeyText, ca.add( img.sz().x/2 + 5, img.sz().y + 1), 1, 1, Color.WHITE, Color.BLACK);
 		    if(i == use) {
 			g.chcolor(255, 0, 128, 255);
 			Coord cc = ca.add(img.sz().x / 2, img.sz().y + 5);
@@ -202,14 +209,16 @@ public class Fightsess extends Widget {
     }
 
     public boolean globtype(char key, KeyEvent ev) {
+
 	int c = ev.getKeyChar();
 	if((key == 0) && (c >= KeyEvent.VK_1) && (c < KeyEvent.VK_1 + actions.length)) {
 	    int n = c - KeyEvent.VK_1;
 	    if((ev.getModifiersEx() & KeyEvent.CTRL_DOWN_MASK) != 0)
-		wdgmsg("drop", n);
-	    else
-		wdgmsg("use", n);
-	    return(true);
+            wdgmsg("drop", n);
+                else
+            wdgmsg("use", n);
+            return (true);
+
 	}
 	return(super.globtype(key, ev));
     }

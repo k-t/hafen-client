@@ -20,8 +20,9 @@ public class ContextTaskFinder {
     private static final String[] CLOVERABLEKRITTERS = {"gfx/kritter/horse/horse",
             "gfx/kritter/cattle/cattle", "gfx/kritter/sheep/sheep", "gfx/kritter/boar/boar"};
 
-    private static final String[] OPENABLEGATES = {"gfx/terobjs/arch/brickwallgate", "gfx/terobjs/arch/palisadegate",
-            "gfx/terobjs/arch/polesgate"};
+    private static final String[] OPENABLEGATES = {"gfx/terobjs/arch/brickwallgate", "gfx/terobjs/arch/palisadegate"};
+
+    private static final String[] MILESTONES = {"gfx/terobjs/road/milestone-stone-e", "gfx/terobjs/road/milestone-wood-e"};
 
     private static final List<String> WATERCONTAINER = Arrays.asList("gfx/invobjs/waterflask",
             "gfx/invobjs/waterskin",
@@ -29,31 +30,63 @@ public class ContextTaskFinder {
             "gfx/invobjs/bucket-water",
             "gfx/invobjs/kuksa",
             "gfx/invobjs/kuksa-full" );
+    private static final String KRITTER = "gfx/kritter/";
+    private static final String[] LIVESTOCK = {KRITTER+"cattle/cattle",KRITTER+"cattle/calf", KRITTER+"sheep/sheep",
+            KRITTER+"sheep/lamb", KRITTER+"pig/piglet", KRITTER+"pig/sow", KRITTER+"pig/hog"};
 
-    public static void findTask(TaskManager tasks, UI ui) {
-
-        if (checkForageables(tasks, ui))
-            return;
-
-        if (checkGate(tasks))
-            return;
+    /*
+        Hotkey E priority list
+     */
+    public static void findHandTask(TaskManager tasks, UI ui) {
 
         if (checkQuickHandAction(tasks))
             return;
 
-        if (checkHandToolAction(tasks))
-            return;
 
-        if (tryGiddyUp(tasks)) {
-            return;
-        }
-        if (findDreamCatcher(tasks))
+
+        if (checkRClick(tasks, 30, "Giddyup!", CLOVERABLEKRITTERS))
             return;
 
         tasks.getContext().error("Nothing to do");
     }
+    /*
+        Hotkey F priority list
+     */
+    public static void findBuilding(TaskManager tasks, UI ui) {
 
-    private static boolean checkForageables(TaskManager tasks, UI ui) {
+        if (checkGate(tasks))
+            return;
+
+        if (checkMileStone(tasks))
+            return;
+
+        // shoo livestock
+        if (checkRClick(tasks, 30, "Shoo", LIVESTOCK))
+            return;
+
+        // pick leaves from mulberry
+        if (checkRClick(tasks, 30, "Pick leaf", "gfx/terobjs/trees/mulberry"))
+            return;
+
+        // harvest wax from beehive
+
+        if (checkRClick(tasks, 30, "Harvest wax", "gfx/terobjs/beehive"))
+            return;
+
+        // harvest dreamcatcher
+        if (checkRClick(tasks, 25, "Harvest", "gfx/terobjs/dreca"))
+            return;
+    }
+
+    /*
+        Hotkey space priority list TODO hand tool actions, chop trees, dig on tile, maybe mine, butcher animal with cutting tool
+        TODO checkbox to enable/disable tasks
+     */
+
+    /*
+        Hotkey Q foraging only
+     */
+    public static boolean checkForageables(TaskManager tasks, UI ui) {
         List<String> names = new ArrayList<String>();
         for (CustomIconGroup group : ui.sess.glob.icons.config.groups) {
             if ("Forageables".equals(group.name)) {
@@ -75,7 +108,7 @@ public class ContextTaskFinder {
     }
 
     private static boolean checkGate(TaskManager tasks) {
-        Gob obj = tasks.getContext().findObjectByNames(50, OPENABLEGATES);
+        Gob obj = tasks.getContext().findObjectByNames(35, OPENABLEGATES);
 
         if (obj!=null) {
             tasks.getContext().click(obj, 3,0);
@@ -133,28 +166,64 @@ public class ContextTaskFinder {
     }
 
     /*
-    WIP
+    TODO
      */
     private static boolean  checkHandToolAction(TaskManager tasks) {
+        GItem left = tasks.getContext().getItemLeftHand()!=null?tasks.getContext().getItemLeftHand().item:null;
+        GItem right = tasks.getContext().getItemRightHand()!=null?tasks.getContext().getItemRightHand().item:null;
+
+        //  tanning fluid first
+            if (left != null && left.resname().contains("bucket-tanfluid")
+                    || right!= null && right.resname().contains("bucket-tanfluid") ) {
+                if (tasks.getContext().getItemAtHand()!=null) {
+                    tasks.getContext().error("Temporary slot needs to be empty");
+                    return false;
+                }
+                Gob obj = tasks.getContext().findObjectByNames(50, "gfx/terobjs/ttub");
+                if (obj!= null) {
+                    if (left != null && left.resname().contains("bucket-tanfluid"))
+                        Utils.takeItem(tasks.getContext().getItemLeftHand().item);
+                    else
+                        Utils.takeItem(tasks.getContext().getItemRightHand().item);
+                    tasks.add(new FluidTask(obj));
+                return true;}
+            }
+
+        // fill empty bucket with water from barrel
+        if ((left != null && left.resname().equals("gfx/invobjs/bucket"))
+                || (right!= null && right.resname().equals("gfx/invobjs/bucket"))) {
+            if (tasks.getContext().getItemAtHand()!=null) {
+                tasks.getContext().error("Temporary slot needs to be empty");
                 return false;
+            }
+            Gob obj = tasks.getContext().findObjectByNames(50, "gfx/terobjs/barrel");
+            if (obj!= null) {
+                if (left != null && left.resname().equals("gfx/invobjs/bucket"))
+                    Utils.takeItem(tasks.getContext().getItemLeftHand().item);
+                else if (right != null && right.resname().equals("gfx/invobjs/bucket"))
+                    Utils.takeItem(tasks.getContext().getItemRightHand().item);
+                tasks.add(new FluidTask(obj));
+                return true;}
+        }
+
+        return false;
     }
 
-    private static boolean  tryGiddyUp(TaskManager tasks) {
-        Gob obj = tasks.getContext().findObjectByName(50, "gfx/kritter/horse/horse");
-        if (obj != null) {
-            tasks.add(new RClickTask(obj, "Giddyup!"));
+    private static boolean checkMileStone(TaskManager tasks) {
+        Gob obj = tasks.getContext().findObjectByNames(30, MILESTONES);
+        if (obj!=null) {
+            tasks.getContext().click(obj, 3,0, obj.sc);
             return true;
         }
         return false;
     }
 
-    private static boolean  findDreamCatcher(TaskManager tasks) {
-        Gob obj = tasks.getContext().findObjectByName(50, "gfx/terobjs/dreca");
+    private static boolean checkRClick(TaskManager tasks, int radius, String action, String... objects) {
+        Gob obj = tasks.getContext().findObjectByNames(radius, objects);
         if (obj != null) {
-            tasks.add(new RClickTask(obj, "Harvest"));
+            tasks.add(new RClickTask(obj, action));
             return true;
         }
         return false;
     }
-
 }

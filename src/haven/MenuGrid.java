@@ -141,6 +141,7 @@ public class MenuGrid extends Widget {
     };
 
     private void updlayout() {
+
 	synchronized(ui.sess.glob.paginae) {
 	    List<Pagina> cur = new ArrayList<Pagina>();
 	    loading = !cons(this.cur, cur);
@@ -151,14 +152,14 @@ public class MenuGrid extends Widget {
 		for(int x = 0; x < gsz.x; x++) {
 		    Pagina btn = null;
 		    if((this.cur != null) && (x == gsz.x - 1) && (y == gsz.y - 1)) {
-			btn = bk;
+				btn = bk;
 		    } else if((cur.size() > ((gsz.x * gsz.y) - 1)) && (x == gsz.x - 2) && (y == gsz.y - 1)) {
-			btn = next;
+				btn = next;
 		    } else if(i < cur.size()) {
-			Resource.AButton ad = cur.get(i).act();
-			if(ad.hk != 0)
-			    hotmap.put(Character.toUpperCase(ad.hk), cur.get(i));
-			btn = cur.get(i++);
+				Resource.AButton ad = cur.get(i).act();
+				if(ad.hk != 0 && ad.hk != 'E' && ad.hk != 'e')
+			    	hotmap.put(Character.toUpperCase(ad.hk), cur.get(i));
+				btn = cur.get(i++);
 		    }
 		    layout[x][y] = btn;
 		}

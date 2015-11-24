@@ -1,5 +1,6 @@
 package haven;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -197,6 +198,8 @@ public class CustomSettingsPanel extends OptWnd.Panel {
         y += 20;
         panel.add(new PrefCheckBox("Disable flower menu animations", Config.enableMenuAnimation, true), new Coord(0, y));
         y += 20;
+        panel.add(new PrefCheckBox("Use alternative look for flower menus", Config.enableCustomFlowerMenu), new Coord(0, y));
+        y += 20;
         panel.add(new PrefCheckBox("Display additional belt for Fn keys", Config.showCustomFKeysBelt) {
             public void set(boolean val) {
                 super.set(val);
@@ -236,32 +239,26 @@ public class CustomSettingsPanel extends OptWnd.Panel {
         Widget panel = new Widget();
         panel.setfocusctl(true);
         int y = 0;
-        panel.add(new Label("R"), new Coord(0, y));
-        y += 20;
-        panel.add(new Label("Tries to following items if they are in the cursor or hidden handslot(E)"), new Coord(10, y));
-        y += 20;
-        panel.add(new Label("Unlit torch: Lights unlit torch on campfire if available"), new Coord(10, y));
-        y += 20;
-        panel.add(new Label("Lit torch: Lights fueled buildings (smelter, ovens, kilns etc)"), new Coord(10, y));
-        y += 20;
-        panel.add(new Label("(Most) watercontainers: Fills it on a nearby barrel or dumps content into barrel"), new Coord(10, y));
-        y += 20;
-        panel.add(new Label("Clover: Feeds it to horse, auroch, ram or boar. An additional R click next to a horse will giddyup"), new Coord(10, y));
-        y += 40;
-        panel.add(new Label("F"), new Coord(0, y));
-        y += 20;
-        panel.add(new Label("Interactions with buildings"), new Coord(10, y));
-        y += 20;
-        panel.add(new Label("Tries to harvest a dreamcatcher"), new Coord(10, y));
-        y += 20;
-        panel.add(new Label("Opens or closes a fence, palisade, or brickwall gate"), new Coord(10, y));
-        y += 20;
-        panel.add(new Label("Activates roadsign and milestone flower menu for easier travelling"), new Coord(10, y));
-        y += 40;
-        panel.add(new Label("CTRL + 1, 2, 3 or 4"), new Coord(0, y));
-        y += 20;
-        panel.add(new Label("When next to a road sign or milestone, will use the road assigned to the slot. If no such road exists" +
-                "- a road sign has only one road while a milestone can have less than four- nothing happens."), new Coord(10, y));
+        String nl=  "\n    ";
+        panel.add(new RichTextBox(new Coord(280, 300),
+                "Q"+nl+
+                "Picks forageable items in the vicinity. Only items that are selected to be displayed on the minimap are picked up."+"\n\n"+
+                "R"+nl+
+                "Uses the following items in the cursor or the hidden slot:"+nl+nl+
+                "Unlit torch: Lights unlit torch on campfire if available"+nl+nl+
+                "Lit torch: Lights fueled buildings (smelter, ovens, kilns etc"+nl+nl+
+                "(Most) watercontainers: Fills it on a nearby barrel or dumps content into barrel"+nl+nl+
+                "Clover: Feeds it to horse, auroch, ram or boar. An additional R click next to a horse will giddyup"+"\n\n"+
+                "F"+nl+
+                "General interaction with objects not requiring items"+nl+nl+
+                "Opens or closes a palisade or brickwall gate"+nl+nl+
+                "Shoos closest livestock"+nl+nl+
+                "Picks leaves from closest mulberry tree if available"+nl+nl+
+                "Harvests wax from closest beehive if available"+nl+nl+
+                "Harvests a dreamcatcher if it has dreams available"+nl+nl+
+                "Activates a crossroad menu for easier travelling\n\n"+
+                "Numpad 1, 2, 3 or 4" +nl+nl+
+                        "When standing next to a road sign or milestone, will use the road assigned to the slot.", RichText.stdf));
         panel.pack();
         return panel;
     }

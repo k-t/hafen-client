@@ -27,7 +27,7 @@ public class RClickTask extends FsmTask {
                     @Override
                     public void done(Boolean success) {
                         if (!success)
-                            stop("Nothing to harvest");
+                            stop("No action possible");
                         else
                             stop();
                     }

@@ -847,7 +847,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	if(key == ':') {
 	    entercmd();
 	    return(true);
-	} else if(key == ' ') {
+	} else if(ev.getKeyCode() == KeyEvent.VK_P) {
 	    toggleui();
 	    return(true);
 	} else if(key == 3) {
@@ -878,15 +878,10 @@ public class GameUI extends ConsoleHost implements Console.Directory {
         boolean alt = ev.isAltDown();
 		boolean ctrl = ev.isControlDown();
         int keycode = ev.getKeyCode();
-
          if (alt && keycode >= KeyEvent.VK_0 && keycode <= KeyEvent.VK_9) {
-			 tasks.add(new MileStoneTask(Utils.floormod(keycode - KeyEvent.VK_0 - 1, 10)));
-			//beltwdg.setCurrentBelt(Utils.floormod(keycode - KeyEvent.VK_0 - 1, 10));
+			beltwdg.setCurrentBelt(Utils.floormod(keycode - KeyEvent.VK_0 - 1, 10));
             return true;
-        } else if (ev.getModifiers() == InputEvent.CTRL_DOWN_MASK && keycode >= KeyEvent.VK_1 && keycode <= KeyEvent.VK_4) {
-			 tasks.add(new MileStoneTask(Utils.floormod(keycode - KeyEvent.VK_0 - 1, 10)));
-			 return true;
-		 } else if (alt && keycode == KeyEvent.VK_S) {
+        }  else if (alt && keycode == KeyEvent.VK_S) {
             studywnd.show(!studywnd.visible);
             if (studywnd.visible)
                 studywnd.raise();
@@ -960,10 +955,13 @@ public class GameUI extends ConsoleHost implements Console.Directory {
         } else if (ev.isShiftDown() && keycode == KeyEvent.VK_I) {
             Config.hideKinInfoForNonPlayers.set(!Config.hideKinInfoForNonPlayers.get());
             return true;
-        } else if (ev.isControlDown() && keycode == KeyEvent.VK_H) {
+        } else if (ctrl && keycode == KeyEvent.VK_H) {
             Config.hideModeEnabled.set(!Config.hideModeEnabled.get());
             return true;
-        } else if (alt && keycode == KeyEvent.VK_P) {
+         } else if (keycode >= KeyEvent.VK_NUMPAD1 && keycode <= KeyEvent.VK_NUMPAD4) {
+            tasks.add(new MileStoneTask(Utils.floormod(keycode - KeyEvent.VK_NUMPAD0 - 1, 10)));
+             return true;
+         } else if (alt && keycode == KeyEvent.VK_P) {
             Config.showGobPaths.set(!Config.showGobPaths.get());
             return true;
         }
@@ -1227,7 +1225,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	    } else {
 		keyact(i + (curbelt * 12));
 	    }
-	    return(true);
+	    return(false);
 	}
 
 	public boolean drop(Coord c, Coord ul) {

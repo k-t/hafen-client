@@ -37,9 +37,14 @@ public abstract class FsmTask extends Task {
         setState(new Wait(timeout, next));
     }
 
+    protected final void waitMenu(double timeout, int optionNumber, Callback<Boolean> callback) {
+        setState(new WaitMenu(timeout, optionNumber, callback));
+    }
+
     protected final void waitMenu(double timeout, String text, Callback<Boolean> callback) {
         setState(new WaitMenu(timeout, text, callback));
     }
+
 
     private class Wait extends State {
         private final State next;
@@ -61,28 +66,43 @@ public abstract class FsmTask extends Task {
 
     private class WaitMenu extends State {
         private final String text;
+        private final int optionNumber;
         private final double timeout;
         private final Callback<Boolean> callback;
         private double t;
+
+        public WaitMenu(double timeout, int optionNumber, Callback<Boolean> callback) {
+            this.optionNumber = optionNumber;
+            this.timeout = timeout;
+            this.callback = callback;
+            this.text="";
+        }
 
         public WaitMenu(double timeout, String text, Callback<Boolean> callback) {
             this.text = text;
             this.timeout = timeout;
             this.callback = callback;
+            this.optionNumber=-1;
         }
+
 
         @Override
         public void tick(double dt) {
             FlowerMenu menu = context().getMenu();
             if (menu != null) {
+                int i = 0;
                 for (FlowerMenu.Petal opt : menu.opts) {
-                    if (opt.name.equals(text)) {
+                    if (opt.name.equals(text) || i == optionNumber) {
                         menu.choose(opt);
                         menu.destroy();
                         callback.done(true);
                         return;
                     }
+                    i++;
                 }
+                menu.choose(null);
+                menu.destroy();
+                callback.done(false);
             } else {
                 t += dt;
                 if (t > timeout) {
