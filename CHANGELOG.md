@@ -1,5 +1,9 @@
 ## Changelog
 
+### r89
+
+- Fixed issue with minimized stone towers
+
 ### r88
 
 - Merged latest vanilla changes
