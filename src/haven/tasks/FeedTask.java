@@ -27,7 +27,7 @@ public abstract class FeedTask extends FsmTask {
     private class FindTrough extends State {
         @Override
         public void tick(double dt) {
-            gob = context().findObjectByName(50, objectName);
+            gob = context().findObjectByName(50, false, objectName);
             if (gob != null) {
                 setState(new FindFood());
             } else {

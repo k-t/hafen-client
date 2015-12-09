@@ -32,6 +32,13 @@ class TaskContext {
         return null;
     }
 
+    public WItem getItemLeftHand() {
+        return ui.gui.getEquipory().slots[6];
+    }
+    public WItem getItemRightHand() {
+        return ui.gui.getEquipory().slots[7];
+    }
+
     public FlowerMenu getMenu() {
         return ui.root.findchild(FlowerMenu.class);
     }
@@ -39,16 +46,20 @@ class TaskContext {
     public void click(Gob gob, int button, int mod) {
         ui.gui.map.wdgmsg("click", Coord.z, gob.rc, button, 0, mod, (int)gob.id, gob.rc, 0, -1);
     }
+    public void click(Gob gob, int button, int mod, Coord coord) {
+        ui.gui.map.wdgmsg("click", coord, gob.rc, button, 0, mod, (int)gob.id, gob.rc, 0, -1);
+    }
+
 
     public Gob findObjectById(long id) {
         return ui.sess.glob.oc.getgob(id);
     }
 
-    public Gob findObjectByName(int radius, String name) {
-        return findObjectByNames(radius, name);
+    public Gob findObjectByName(int radius, boolean exact, String name) {
+        return findObjectByNames(radius, exact, name);
     }
 
-    public Gob findObjectByNames(int radius, String... names) {
+    public Gob findObjectByNames(int radius, boolean exact, String... names) {
         Coord plc = player().rc;
         double min = radius;
         Gob nearest = null;
@@ -58,7 +69,7 @@ class TaskContext {
                 if (dist < min) {
                     boolean matches = false;
                     for (String name : names) {
-                        if (Utils.isObjectName(gob, name)) {
+                        if (Utils.isObjectName(gob, exact, name)) {
                             matches = true;
                             break;
                         }

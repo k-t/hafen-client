@@ -598,7 +598,7 @@ public class CharWnd extends Window {
 
     public class StudyInfo extends Widget {
 	public Widget study;
-	public int texp, tw, tenc;
+	public int texp, tw, tenc, tlpph;
 	private final Text.UText<?> texpt = new Text.UText<Integer>(Text.std) {
 	    public Integer value() {return(texp);}
 	    public String text(Integer v) {return(Utils.thformat(v));}
@@ -610,6 +610,10 @@ public class CharWnd extends Window {
 	    public Integer value() {return(tenc);}
 	    public String text(Integer v) {return(Integer.toString(tenc));}
 	};
+    private final Text.UText<?> lppht = new Text.UText<Integer>(Text.std) {
+        public Integer value() {return(tlpph);}
+        public String text(Integer v) {return(Integer.toString(tlpph));}
+        };
 
 	private StudyInfo(Coord sz, Widget study) {
 	    super(sz);
@@ -617,10 +621,11 @@ public class CharWnd extends Window {
 	    add(new Label("Attention:"), 2, 2);
 	    add(new Label("Experience cost:"), 2, 32);
 	    add(new Label("Learning points:"), 2, sz.y - 32);
+        add(new Label("LP/h:"), 2, sz.y-64);
 	}
 
 	private void upd() {
-	    int texp = 0, tw = 0, tenc = 0;
+	    int texp = 0, tw = 0, tenc = 0, tlpph = 0;
 	    for(GItem item : study.children(GItem.class)) {
 		try {
 		    Curiosity ci = ItemInfo.find(Curiosity.class, item.info());
@@ -628,11 +633,12 @@ public class CharWnd extends Window {
 			texp += ci.exp;
 			tw += ci.mw;
 			tenc += ci.enc;
+            tlpph += ci.getLpph();
 		    }
 		} catch(Loading l) {
 		}
 	    }
-	    this.texp = texp; this.tw = tw; this.tenc = tenc;
+	    this.texp = texp; this.tw = tw; this.tenc = tenc; this.tlpph = tlpph;
 	}
 
 	public void draw(GOut g) {
@@ -644,6 +650,8 @@ public class CharWnd extends Window {
 	    g.aimage(tenct.get().tex(), new Coord(sz.x - 4, 47), 1.0, 0.0);
 	    g.chcolor(192, 192, 255, 255);
 	    g.aimage(texpt.get().tex(), sz.add(-4, -15), 1.0, 0.0);
+        g.chcolor(192, 255, 255, 255);
+        g.aimage(lppht.get().tex(), new Coord(sz.x -4, 77), 1.0, 0.0);
 	}
     }
 
@@ -1045,7 +1053,7 @@ public class CharWnd extends Window {
 
 	final Tabs tabs = new Tabs(new Coord(15, 10), Coord.z, this);
 	Tabs.Tab battr;
-	{ 
+	{
 	    int x = 5, y = 0;
 
 	    battr = tabs.add();

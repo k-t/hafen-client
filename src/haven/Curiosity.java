@@ -26,11 +26,11 @@
 
 package haven;
 
-import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
 public class Curiosity extends ItemInfo.Tip {
     public final int exp, mw, enc;
+    public float lpph;
     private GItem item;
     private CuriosityInfo customInfo;
 
@@ -52,9 +52,9 @@ public class Curiosity extends ItemInfo.Tip {
         CuriosityInfo customInfo = getCustomInfo();
         if (customInfo != null && customInfo != CuriosityInfo.empty) {
             buf.append(String.format("Time: $col[192,192,255]{%s}\n", customInfo.getFormattedTime()));
-            float expPerHour = exp / (customInfo.time / 3600.0f);
-            buf.append(String.format("LP/H/Slot: $col[255,192,255]{%.2f}\n", expPerHour / customInfo.slots));
-            buf.append(String.format("LP/H/MW: $col[255,255,192]{%.2f}\n", expPerHour / mw));
+            lpph = exp / (customInfo.time / 3600.0f);
+            buf.append(String.format("LP/H/Slot: $col[255,192,255]{%.2f}\n", lpph / customInfo.slots));
+            buf.append(String.format("LP/H/MW: $col[255,255,192]{%.2f}\n", lpph / mw));
         }
         return(RichText.render(buf.toString(), 0).img);
     }
@@ -73,5 +73,18 @@ public class Curiosity extends ItemInfo.Tip {
             }
         }
         return customInfo;
+    }
+
+    /*
+        not ideal, but resource is not available when constructor is called
+     */
+    public float getLpph() {
+        if (lpph==0) {
+            CuriosityInfo customInfo = getCustomInfo();
+            if (customInfo != null && customInfo != CuriosityInfo.empty) {
+                lpph = exp / (customInfo.time / 3600.0f);
+            }
+        }
+        return lpph;
     }
 }

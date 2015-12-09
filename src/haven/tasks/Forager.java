@@ -30,7 +30,7 @@ public class Forager extends FsmTask {
     private class FindObject extends State {
         @Override
         public void tick(double dt) {
-            obj = context().findObjectByNames(radius, objectNames);
+            obj = context().findObjectByNames(radius, false, objectNames);
             if (obj != null) {
                 if (window == null && maxItemCount > 1)
                     window = context().gui().add(new StatusWindow(), 300, 200);

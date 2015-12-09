@@ -57,7 +57,7 @@ public class IMeter extends Widget {
     
     public static class Meter {
 	Color c;
-	int a;
+	public int a;
 	
 	public Meter(Color c, int a) {
 	    this.c = c;

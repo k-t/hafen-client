@@ -22,6 +22,7 @@ public class CustomSettingsPanel extends OptWnd.Panel {
         categoryList.add(new Category(0, "Tools", null));
         categoryList.add(new Category(1, "Autopick", createAutopick()));
         categoryList.add(new Category(1, "Autostudy", createAutostudy()));
+        categoryList.add(new Category(0, "Special Hotkeys", createHotkeys()));
 
         for (Category category : categoryList.categories) {
             if (category.widget != null) {
@@ -240,6 +241,34 @@ public class CustomSettingsPanel extends OptWnd.Panel {
                 Config.autopickRadius.set(getValue());
             }
         }, new Coord(label.sz.x + 5, y));
+        panel.pack();
+        return panel;
+    }
+
+    private static Widget createHotkeys() {
+        Widget panel = new Widget();
+        panel.setfocusctl(true);
+        int y = 0;
+        String nl=  "\n    ";
+        panel.add(new RichTextBox(new Coord(280, 300),
+                "Q"+nl+
+                        "Picks forageable items in the vicinity. Only items that are selected to be displayed on the minimap are picked up."+"\n\n"+
+                        "R"+nl+
+                        "Uses the following items in the cursor or the hidden slot:"+nl+nl+
+                        "Unlit torch: Lights unlit torch on campfire if available"+nl+nl+
+                        "Lit torch: Lights fueled buildings (smelter, ovens, kilns etc"+nl+nl+
+                        "(Most) watercontainers: Fills it on a nearby barrel or dumps content into barrel"+nl+nl+
+                        "Clover: Feeds it to horse, auroch, ram or boar. An additional R click next to a horse will giddyup"+"\n\n"+
+                        "F"+nl+
+                        "General interaction with objects not requiring items"+nl+nl+
+                        "Opens or closes a palisade or brickwall gate"+nl+nl+
+                        "Shoos closest livestock"+nl+nl+
+                        "Picks leaves from closest mulberry tree if available"+nl+nl+
+                        "Harvests wax from closest beehive if available"+nl+nl+
+                        "Harvests a dreamcatcher if it has dreams available"+nl+nl+
+                        "Activates a crossroad menu for easier travelling\n\n"+
+                        "Numpad 1, 2, 3 or 4" +nl+nl+
+                        "When standing next to a road sign or milestone, will use the road assigned to the slot.", RichText.stdf));
         panel.pack();
         return panel;
     }

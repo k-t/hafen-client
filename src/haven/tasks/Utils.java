@@ -24,10 +24,10 @@ class Utils {
         return isItemName(item, Collections.singleton(name));
     }
 
-    public static boolean isObjectName(Gob gob, String name) {
+     public static boolean isObjectName(Gob gob, boolean exact ,String name) {
         try {
             Resource res = gob.getres();
-            return (res != null) && res.name.contains(name);
+            return (res != null) && (exact?res.name.equals(name):res.name.contains(name));
         } catch (Loading e) {
             return false;
         }

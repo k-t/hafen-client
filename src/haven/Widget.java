@@ -1111,4 +1111,14 @@ public class Widget {
 
 	public abstract void ntick(double a);
     }
+
+	public GameUI gameui() {
+		Widget parent = this.parent;
+		while (parent != null) {
+			if (parent instanceof GameUI)
+				return (GameUI) parent;
+			parent = parent.parent;
+		}
+		return null;
+	}
 }

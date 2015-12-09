@@ -92,6 +92,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public ChatHidePanel chatHidePanel;
     private final GameUILayout layout;
     private boolean ignoreTrackingSound;
+    public boolean lowStam;
 
     public abstract class Belt extends Widget {
 	public Belt(Coord sz) {
@@ -692,6 +693,10 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	} else if(afk && (System.currentTimeMillis() - ui.lastevent < 300000)) {
 	    afk = false;
 	}
+        if (lowStam) {
+            tasks.add(new Drunkard());
+            lowStam = false;
+        }
     tasks.tick(dt);
     }
 
@@ -846,7 +851,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	if(key == ':') {
 	    entercmd();
 	    return(true);
-	} else if(key == ' ') {
+	} else if(ev.getKeyCode() == 'P') {
+		// reserving space for future use, dont use space for this bullshit l2ui
 	    toggleui();
 	    return(true);
 	} else if(key == 3) {
@@ -939,17 +945,13 @@ public class GameUI extends ConsoleHost implements Console.Directory {
             ui.sess.glob.map.rebuild();
             return true;
         } else if (keycode == KeyEvent.VK_Q && ev.getModifiers() == 0) {
-            // get all forageables from config
-            List<String> names = new ArrayList<String>();
-            for (CustomIconGroup group : ui.sess.glob.icons.config.groups) {
-                if ("Forageables".equals(group.name)) {
-                    for (CustomIconMatch match : group.matches)
-                        if (match.show)
-                            names.add(match.value);
-                    break;
-                }
-            }
-            tasks.add(new Forager(11 * Config.autopickRadius.get(), 1, names.toArray(new String[names.size()])));
+			ContextTaskFinder.checkForageables(tasks, ui);
+            return true;
+        } else if (keycode == KeyEvent.VK_R && ev.getModifiers() == 0) {
+            ContextTaskFinder.findHandTask(tasks, ui);
+            return true;
+        } else if (keycode == KeyEvent.VK_F && ev.getModifiers() == 0) {
+            ContextTaskFinder.findBuilding(tasks, ui);
             return true;
         } else if (keycode == KeyEvent.VK_W && ev.getModifiers() == 0) {
             tasks.add(new Drunkard());
@@ -963,9 +965,34 @@ public class GameUI extends ConsoleHost implements Console.Directory {
         } else if (alt && keycode == KeyEvent.VK_P) {
             Config.showGobPaths.set(!Config.showGobPaths.get());
             return true;
+        } else if (keycode >= KeyEvent.VK_NUMPAD1 && keycode <= KeyEvent.VK_NUMPAD4) {
+            tasks.add(new MileStoneTask(Utils.floormod(keycode - KeyEvent.VK_NUMPAD0 - 1, 10)));
+            return true;
         }
     }
 	return(super.globtype(key, ev));
+    }
+
+	public List<IMeter.Meter> getmeters(String name) {
+		for (Widget meter : meters) {
+			if (meter instanceof IMeter) {
+				IMeter im = (IMeter) meter;
+				try {
+					Resource res = im.bg.get();
+					if (res != null && res.basename().equals(name))
+						return im.meters;
+				} catch (Loading l) {
+				}
+			}
+		}
+		return null;
+	}
+
+    public IMeter.Meter getmeter(String name, int midx) {
+        List<IMeter.Meter> meters = getmeters(name);
+        if (meters != null || midx < meters.size())
+            return meters.get(midx);
+        return null;
     }
 
     public boolean mousedown(Coord c, int button) {

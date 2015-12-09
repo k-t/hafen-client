@@ -156,7 +156,8 @@ public class MenuGrid extends Widget {
 			btn = next;
 		    } else if(i < cur.size()) {
 			Resource.AButton ad = cur.get(i).act();
-			if(ad.hk != 0)
+			if(ad.hk != 0 && ad.hk != 'E' && ad.hk != 'e')
+                // disabled E as hotkey for the menugrid. E is top value on the hotkey real estate market. l2ui
 			    hotmap.put(Character.toUpperCase(ad.hk), cur.get(i));
 			btn = cur.get(i++);
 		    }

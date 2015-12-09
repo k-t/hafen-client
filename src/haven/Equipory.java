@@ -65,7 +65,7 @@ public class Equipory extends Widget implements DTarget {
 	}
     }
 
-    WItem[] slots = new WItem[ecoords.length];
+    public WItem[] slots = new WItem[ecoords.length];
     Map<GItem, WItem[]> wmap = new HashMap<GItem, WItem[]>();
 	
     @RName("epry")

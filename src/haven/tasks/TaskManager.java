@@ -26,6 +26,10 @@ public class TaskManager {
         task.start();
     }
 
+    public TaskContext getContext(){
+        return context;
+    }
+
     public void tick(double dt) {
         for (Task task : tasks)
             task.tick(dt);

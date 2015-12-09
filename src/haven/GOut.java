@@ -39,7 +39,7 @@ public class GOut {
     private final GOut root;
     public final GLState.Applier st;
     private final GLState.Buffer def2d, cur2d;
-	
+
     protected GOut(GOut o) {
 	this.gl = o.gl;
 	this.gc = o.gc;
@@ -66,12 +66,12 @@ public class GOut {
 	this.cur2d = new GLState.Buffer(gc);
 	defstate();
     }
-    
+
     public static class GLException extends RuntimeException {
 	public int code;
 	public String str;
 	private static javax.media.opengl.glu.GLU glu = new javax.media.opengl.glu.GLU();
-	
+
 	public GLException(int code) {
 	    super("GL Error: " + code + " (" + glu.gluErrorString(code) + ")");
 	    this.code = code;
@@ -140,7 +140,7 @@ public class GOut {
     public static void checkerr(BGL gl) {
 	gl.bglCheckErr();
     }
-	
+
     private void checkerr() {
 	checkerr(gl);
     }
@@ -148,7 +148,7 @@ public class GOut {
     public GOut root() {
 	return(root);
     }
-    
+
     public GLState.Buffer basicstate() {
 	return(def2d.copy());
     }
@@ -160,7 +160,7 @@ public class GOut {
 	image(tex, c);
 	tex.dispose();
     }
-	
+
     public void image(Resource.Image img, Coord c) {
 	if(img == null)
 	    return;
@@ -264,11 +264,11 @@ public class GOut {
     public void vertex(float x, float y) {
 	gl.glVertex2f(x + tx.x, y + tx.y);
     }
-	
+
     public void apply() {
 	st.apply(this);
     }
-    
+
     public void state(GLState st) {
 	this.st.prep(st);
     }
@@ -276,7 +276,7 @@ public class GOut {
     public void state2d() {
 	st.set(cur2d);
     }
-    
+
     public void line(Coord c1, Coord c2, double w) {
 	st.set(cur2d);
 	apply();
@@ -287,11 +287,11 @@ public class GOut {
 	gl.glEnd();
 	checkerr();
     }
-    
+
     public void text(String text, Coord c) {
 	atext(text, c, 0, 0);
     }
-	
+
     public void atext(String text, Coord c, double ax, double ay) {
 	Text t = Text.render(text);
 	Tex T = t.tex();
@@ -323,7 +323,7 @@ public class GOut {
 	gl.glEnd();
 	checkerr();
     }
-    
+
     public void poly2(Object... c) {
 	st.set(cur2d);
 	st.put(States.color, States.vertexcolor);
@@ -358,7 +358,7 @@ public class GOut {
 	gl.glEnd();
 	checkerr();
     }
-	
+
     public void frect(Coord c1, Coord c2, Coord c3, Coord c4) {
 	st.set(cur2d);
 	apply();
@@ -370,7 +370,7 @@ public class GOut {
 	gl.glEnd();
 	checkerr();
     }
-	
+
     public void ftexrect(Coord ul, Coord sz, GLState s, float tl, float tt, float tr, float tb) {
 	ul = tx.add(ul);
 	Coord br = ul.add(sz);
@@ -428,7 +428,7 @@ public class GOut {
 	gl.glEnd();
 	checkerr();
     }
-	
+
     public void fellipse(Coord c, Coord r) {
 	fellipse(c, r, 0, 360);
     }
@@ -558,7 +558,7 @@ public class GOut {
 	g.sz = gbr.sub(g.ul);
 	return(g);
     }
-    
+
     public GOut reclipl(Coord ul, Coord sz) {
 	GOut g = new GOut(this);
 	g.tx = this.tx.add(ul);
@@ -566,7 +566,7 @@ public class GOut {
 	g.sz = sz;
 	return(g);
     }
-    
+
     public void getpixel(final Coord c, final Callback<Color> cb) {
 	gl.bglSubmit(new BGL.Request() {
 		public void run(GL2 gl) {
@@ -577,7 +577,7 @@ public class GOut {
 		}
 	    });
     }
-    
+
     public void getimage(final Coord ul, final Coord sz, final Callback<BufferedImage> cb) {
 	gl.bglSubmit(new BGL.Request() {
 		public void run(GL2 gl) {
@@ -601,4 +601,13 @@ public class GOut {
     public void getimage(final Callback<BufferedImage> cb) {
 	getimage(Coord.z, sz, cb);
     }
+
+	public void astext(String text, Coord c, double ax, double ay, Color ca, Color cb) {
+		Text t = Text.renderstroked(text, ca, cb);
+		Tex T = t.tex();
+		Coord sz = t.sz();
+		image(T, c.add((int)((double)sz.x * -ax), (int)((double)sz.y * -ay)));
+		T.dispose();
+		checkerr();
+	}
 }
