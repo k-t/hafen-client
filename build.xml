@@ -30,8 +30,6 @@
 	<pathelement path="lib/jogl.jar" />
 	<pathelement path="lib/gluegen-rt.jar" />
 	<pathelement path="lib/jnlp.jar" />
-	<pathelement path="lib/jorbis.jar" />
-	<pathelement path="lib/jogg.jar" />
 	<pathelement path="lib/jglob.jar" />
 	<pathelement path="lib/commons-io-2.4.jar" />
 	<pathelement path="lib/gson-2.3.1.jar" />
@@ -59,12 +57,6 @@
 
   <target name="lib-classes" depends="build-env" unless="unpacked-lib">
     <mkdir dir="build/classes-lib" />
-    <unjar src="lib/jogg.jar" dest="build/classes-lib">
-      <patternset excludes="META-INF/**" />
-    </unjar>
-    <unjar src="lib/jorbis.jar" dest="build/classes-lib">
-      <patternset excludes="META-INF/**" />
-    </unjar>
     <unjar src="lib/jglob.jar" dest="build/classes-lib">
       <patternset excludes="META-INF/**" />
     </unjar>
