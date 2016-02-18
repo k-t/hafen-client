@@ -1,5 +1,9 @@
 ## Changelog
 
+### r92
+
+- Merged latest vanilla changes
+
 ### r91
 
 - Merged latest vanilla changes
