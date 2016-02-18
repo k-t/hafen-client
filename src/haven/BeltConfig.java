@@ -79,7 +79,7 @@ public class BeltConfig {
 
     private static Belt findBelt(String name) {
         for (Belt belt : belts) {
-            if (belt.name.equals(name))
+            if (belt.name != null && belt.name.equals(name))
                 return belt;
         }
         return null;
@@ -142,7 +142,8 @@ public class BeltConfig {
         public SlotCollection findSlots(String accountName, String charName) {
             if (slots != null) {
                 for (SlotCollection sc : slots) {
-                    if (sc.accountName.equals(accountName) && sc.charName.equals(charName))
+                    if ((sc.accountName != null && sc.accountName.equals(accountName)) &&
+                        (sc.charName != null && sc.charName.equals(charName)))
                         return sc;
                 }
             }
