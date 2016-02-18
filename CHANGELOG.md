@@ -1,5 +1,9 @@
 ## Changelog
 
+### r93
+
+- Fixed potential NPE caused by incorrect belt configuration
+
 ### r92
 
 - Merged latest vanilla changes
