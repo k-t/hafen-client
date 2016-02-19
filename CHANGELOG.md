@@ -1,5 +1,9 @@
 ## Changelog
 
+### r94
+
+- Merged latest vanilla changes that should fix crashes related to ridges
+
 ### r93
 
 - Fixed potential NPE caused by incorrect belt configuration
