@@ -1,5 +1,9 @@
 ## Changelog
 
+### r95
+
+- Merged latest vanilla changes
+
 ### r94
 
 - Merged latest vanilla changes that should fix crashes related to ridges
