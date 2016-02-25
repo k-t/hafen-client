@@ -1,5 +1,9 @@
 ## Changelog
 
+### r96
+
+- Restored tooltip on Horizon meter
+
 ### r95
 
 - Merged latest vanilla changes
