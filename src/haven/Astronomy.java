@@ -26,44 +26,18 @@
 
 package haven;
 
+import java.awt.Color;
+
 public class Astronomy {
-    private static final double DAY = 86400; // 1 day in seconds
-    private static final double LUNAR_MONTH = 2592000; // 30 days in seconds
-    private static final double YEAR = 31536000; // 365 days in seconds
-
-    double dt, mp, yt;
-    boolean night;
-    int hh,mm,day;
-    public static final String[] phase ={"New Moon",
-            "Waxing Crescent",
-            "First Quarter",
-            "Waxing Gibbous",
-            "Full Moon",
-            "Waning Gibbous",
-            "Last Quarter",
-            "Waning Crescent"};
-
-    public Astronomy(double dt, double mp, double yt) {
-        this(dt, mp, yt, (dt < 0.25) || (dt > 0.75));
-    }
-
-    public Astronomy(double dt, double mp, double yt, boolean night) {
-        this.dt = dt;
-        this.mp = mp;
-        this.yt = yt;
-        this.night = night;
-        this.hh = (int)(24*dt);
-        this.mm = (int)(60*(24*dt - hh));
-        this.day = (int)(365*yt);
-        this.night = night;
-    }
-
-    public static Astronomy fromGlobalTime(long time) {
-        long secs = time / 1000;
-        return new Astronomy(frac(secs / DAY), frac(secs / LUNAR_MONTH), frac(secs / YEAR));
-    }
-
-    private static double frac(double x) {
-        return x - (int)x;
+    public final double dt, mp, yt;
+    public final boolean night;
+    public final Color mc;
+	
+    public Astronomy(double dt, double mp, double yt, boolean night, Color mc) {
+	this.dt = dt;
+	this.mp = mp;
+	this.yt = yt;
+	this.night = night;
+	this.mc = mc;
     }
 }
