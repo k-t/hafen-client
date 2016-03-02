@@ -163,6 +163,9 @@ public class CharWnd extends Window {
 	    if(trev != null) {
 		try {
 		    Collections.sort(etr, dcmp);
+		    GameUI gui = getparent(GameUI.class);
+		    if(gui != null)
+			gui.msg(String.format("You gained " + Loading.waitfor(trev).layer(Event.class).nm));
 		    trol = new TexI(mktrol(etr, trev));
 		    trtm = System.currentTimeMillis();
 		    trev = null;
@@ -425,12 +428,12 @@ public class CharWnd extends Window {
 
 	public void tick(double dt) {
 	    if((attr.base != cbv) || (attr.comp != ccv)) {
-        if (cbv != 0 && attr.base != cbv) {
-            int diff = attr.base - cbv;
-            GameUI ui = getparent(GameUI.class);
-            if (ui != null)
-                ui.notification("You've %s %d %s!", (diff > 0) ? "gained" : "lost", diff, rnm.text);
-        }
+        //if (cbv != 0 && attr.base != cbv) {
+            //int diff = attr.base - cbv;
+            //GameUI ui = getparent(GameUI.class);
+            //if (ui != null)
+            //    ui.notification("You've %s %d %s!", (diff > 0) ? "gained" : "lost", diff, rnm.text);
+        //}
 		cbv = attr.base; ccv = attr.comp;
 		Color c = Color.WHITE;
 		if(ccv > cbv) {

@@ -89,7 +89,7 @@ public class BuddyWnd extends Widget implements Iterable<BuddyWnd.Buddy> {
 	public int online;
 	public int group;
 	public boolean seen;
-	
+
 	public Buddy(int id, String name, int online, int group, boolean seen) {
 	    this.id = id;
 	    this.name = name;
@@ -97,35 +97,44 @@ public class BuddyWnd extends Widget implements Iterable<BuddyWnd.Buddy> {
 	    this.group = group;
 	    this.seen = seen;
 	}
-	
+
 	public void forget() {
 	    wdgmsg("rm", id);
 	}
-	
+
 	public void endkin() {
 	    wdgmsg("rm", id);
 	}
-	
+
 	public void chat() {
 	    wdgmsg("chat", id);
 	}
-	
+
 	public void invite() {
 	    wdgmsg("inv", id);
 	}
-	
+
 	public void describe() {
 	    wdgmsg("desc", id);
 	}
-	
+
 	public void chname(String name) {
 	    wdgmsg("nick", id, name);
 	}
-	
+
 	public void chgrp(int grp) {
 	    wdgmsg("grp", id, grp);
 	}
-	
+
+	private void chstatus(int status) {
+	    online = status;
+	    GameUI gui = getparent(GameUI.class);
+	    if(gui != null && Config.showKinNotifications.get()) {
+		if(status == 1)
+		    gui.msg(String.format("%s is now online.", name));
+	    }
+	}
+
 	public Text rname() {
 	    if((rname == null) || !rname.text.equals(name))
 		rname = Text.render(name);
@@ -435,9 +444,7 @@ public class BuddyWnd extends Widget implements Iterable<BuddyWnd.Buddy> {
 	    int online = (Integer)args[1];
         Buddy buddy = find(id);
         if (buddy != null) {
-            buddy.online = online;
-            if (Config.showKinNotifications.get())
-                getparent(GameUI.class).notification("%s is %s now", buddy.name, buddy.online > 0 ? "online" : "offline");
+            buddy.chstatus(online);
         }
 	} else if(msg == "upd") {
 	    int id = (Integer)args[0];
