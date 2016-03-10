@@ -1,5 +1,9 @@
 ## Changelog
 
+### r100
+
+- Removed option to minimize towers since it's incompatible with the new multitexturing
+
 ### r99
 
 - Merged latest vanilla changes
