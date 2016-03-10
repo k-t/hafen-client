@@ -1,5 +1,9 @@
 ## Changelog
 
+### r99
+
+- Merged latest vanilla changes
+
 ### r98
 
 - Merged latest vanilla fixes
