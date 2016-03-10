@@ -78,6 +78,7 @@ public class CustomGobInfo extends GAttrib {
             }
             return replacement;
         }
+        /*
         if (Config.displayMiniTowers.get() && getValueOrDefault(isTower.get())) {
             if (replacement == null) {
                 ResDrawable d = gob.getattr(ResDrawable.class);
@@ -87,6 +88,7 @@ public class CustomGobInfo extends GAttrib {
             }
             return replacement;
         }
+        */
         return null;
     }
 
