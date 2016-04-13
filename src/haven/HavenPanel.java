@@ -381,9 +381,9 @@ public class HavenPanel extends GLCanvas implements Runnable, Console.Directory 
     }
 
     private static class Frame {
-	BGL buf; CurrentGL on;
+	BufferBGL buf; CurrentGL on;
 	CPUProfile.Frame pf; long doneat;
-	Frame(BGL buf, CurrentGL on) {this.buf = buf; this.on = on;}
+	Frame(BufferBGL buf, CurrentGL on) {this.buf = buf; this.on = on;}
     }
 
     private Frame[] curdraw = {null};
@@ -542,7 +542,7 @@ public class HavenPanel extends GLCanvas implements Runnable, Console.Directory 
 		    if(curf != null)
 			curf.tick("dsp");
 
-		    BGL buf = new BGL();
+		    BufferBGL buf = new BufferBGL();
 		    GLState.Applier state = this.state;
 		    rootdraw(state, ui, buf);
 		    if(curf != null)
