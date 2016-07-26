@@ -5,10 +5,8 @@ dist: trusty
 jdk:
 - oraclejdk8
 - openjdk6
-addons:
-  apt:
-    packages:
-    - mono-devel
+mono:
+- latest
 deploy:
   skip_cleanup: true
   provider: releases
