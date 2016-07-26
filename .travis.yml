@@ -1,7 +1,5 @@
 language: java
 script: ant deftgt
-sudo: required
-dist: trusty
 jdk:
 - oraclejdk8
 - openjdk6
