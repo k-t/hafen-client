@@ -63,6 +63,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public Inventory maininv;
     public CharWnd chrwdg;
     private Widget qqview;
+    private Widget qqpanel;
     public BuddyWnd buddies;
     public EquipBelt eqbelt;
     public DraggableBelt fkeybelt;
@@ -603,17 +604,17 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	} else if(place == "qq") {
 	    if(qqview != null) {
 			qqview.reqdestroy();
-			layout.removeDraggable(qqview);
+			layout.removeDraggable(qqpanel);
 		}
 		qqview = child;
-	    Widget panel = add(new DraggablePanel("questPanel", new Coord(200, 50)) {
+	    qqpanel = add(new DraggablePanel("questPanel", new Coord(200, 50)) {
 		    public void cdestroy(Widget ch) {
 			qqview = null;
 			destroy();
 		    }
 		});
-		panel.add(qqview);
-		layout.addDraggable(panel, new RelativePosition(HAlign.Right, VAlign.Center, new Coord(10 , 10)), true, true);
+		qqpanel.add(qqview);
+		layout.addDraggable(qqpanel, new RelativePosition(HAlign.Right, VAlign.Center, new Coord(10 , 10)), true, true);
 	} else if(place == "misc") {
 	    add(child, (Coord)args[1]);
 	} else {
