@@ -40,10 +40,17 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
     public int frame;
     public final Glob glob;
     Map<Class<? extends GAttrib>, GAttrib> attr = new HashMap<Class<? extends GAttrib>, GAttrib>();
-    public Collection<Overlay> ols = new LinkedList<Overlay>();
-    private GobPath path;
+    public Collection<Overlay> ols = new LinkedList<Overlay>() {
+	public boolean add(Overlay item) {
+	    /* XXX: Remove me once local code is changed to use addol(). */
+	    if(glob.oc.getgob(id) != null)
+		glob.oc.changed(Gob.this);
+	    return(super.add(item));
+	}
+    };
     private final Collection<ResAttr.Cell<?>> rdata = new LinkedList<ResAttr.Cell<?>>();
     private final Collection<ResAttr.Load> lrdata = new LinkedList<ResAttr.Load>();
+	private GobPath path;
 
     public static class Overlay implements Rendered {
 	public Indir<Resource> res;
@@ -84,6 +91,10 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 	    if(spr != null)
 		rl.add(spr, null);
 	    return(false);
+	}
+
+	public Object staticp() {
+	    return((spr == null)?null:spr.staticp());
 	}
     }
 
@@ -152,6 +163,8 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 	}
     }
 
+    public static class Static {}
+
     public Gob(Glob glob, Coord c, long id, int frame) {
 	this.glob = glob;
 	this.rc = c;
@@ -185,6 +198,14 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 	}
 	if(virtual && ols.isEmpty())
 	    glob.oc.remove(id);
+    }
+
+    /* Intended for local code. Server changes are handled via OCache. */
+    public void addol(Overlay ol) {
+	ols.add(ol);
+    }
+    public void addol(Sprite ol) {
+	addol(new Overlay(ol));
     }
 
     public Overlay findol(int id) {
@@ -402,6 +423,38 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 			rl.add(gi.draw(), null);
 	}
 	return(false);
+    }
+
+    private static final Object DYNAMIC = new Object();
+    private Object seq = null;
+    public Object staticp() {
+	if(seq == null) {
+	    Object fs = new Static();
+	    for(GAttrib attr : attr.values()) {
+		Object as = attr.staticp();
+		if(as == Rendered.CONSTANS) {
+		} else if(as instanceof Static) {
+		} else {
+		    fs = null;
+		    break;
+		}
+	    }
+	    for(Overlay ol : ols) {
+		Object os = ol.staticp();
+		if(os == Rendered.CONSTANS) {
+		} else if(os instanceof Static) {
+		} else {
+		    fs = null;
+		    break;
+		}
+	    }
+	    seq = fs;
+	}
+	return((seq == DYNAMIC)?null:seq);
+    }
+
+    void changed() {
+	seq = null;
     }
 
     public Random mkrandoom() {
