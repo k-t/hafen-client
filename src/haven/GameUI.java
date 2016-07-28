@@ -601,21 +601,19 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	} else if(place == "buff") {
 	    buffs.addchild(child);
 	} else if(place == "qq") {
-	    if(qqview != null)
-		qqview.reqdestroy();
-	    final Widget cref = qqview = child;
-	    add(new AlignPanel() {
-		    {add(cref);}
-
-		    protected Coord getc() {
-			return(new Coord(10, GameUI.this.sz.y - this.sz.y - 10));
-		    }
-
+	    if(qqview != null) {
+			qqview.reqdestroy();
+			layout.removeDraggable(qqview);
+		}
+		qqview = child;
+	    Widget panel = add(new DraggablePanel("questPanel", new Coord(200, 50)) {
 		    public void cdestroy(Widget ch) {
 			qqview = null;
 			destroy();
 		    }
 		});
+		panel.add(qqview);
+		layout.addDraggable(panel, new RelativePosition(HAlign.Right, VAlign.Center, new Coord(10 , 10)), true, true);
 	} else if(place == "misc") {
 	    add(child, (Coord)args[1]);
 	} else {
