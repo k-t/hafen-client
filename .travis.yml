@@ -2,7 +2,6 @@ language: java
 script: ant deftgt
 jdk:
 - oraclejdk8
-- openjdk6
 addons:
   apt:
     packages:
