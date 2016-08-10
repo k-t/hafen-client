@@ -32,6 +32,8 @@ public class GobInfo extends GAttrib {
     static class GobInfoTex extends PView.Draw2D {
         private Tex tex;
         private Gob gob;
+        private GLState.Buffer state;
+        private int up = 1;
 
         public GobInfoTex(Gob gob, Tex tex) {
             this.gob = gob;
@@ -40,8 +42,24 @@ public class GobInfo extends GAttrib {
 
         @Override
         public void draw2d(GOut g) {
-            if (tex != null)
-                g.aimage(tex, gob.sc, 0.5, 0.5);
+            if (tex == null || gob.sc == null || state == null)
+                return;
+
+            Coord sc = Utils.world2screen(gob.getc(), state, up);
+            if(sc != null && sc.isect(Coord.z, g.sz)) {
+                g.aimage(tex, sc, 0.5, 0.5);
+            }
+        }
+
+        @Override
+        public Object staticp() {
+            return CONSTANS;
+        }
+
+        @Override
+        public boolean setup(RenderList d) {
+            state = d.state();
+            return true;
         }
     }
 
@@ -55,7 +73,7 @@ public class GobInfo extends GAttrib {
             infoTex = nullTex;
     }
 
-    public GobInfoTex draw() {
+    public GobInfoTex tex() {
         return infoTex;
     }
 

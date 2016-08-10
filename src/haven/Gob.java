@@ -420,7 +420,7 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 				setattr(gi);
 		}
 		if (gi != null)
-			rl.add(gi.draw(), null);
+			rl.add(gi.tex(), null);
 	}
 	return(false);
     }
