@@ -1,5 +1,11 @@
 ## Changelog
 
+### r105
+
+- Fixed floating growth/damage text
+- Fixed delay in hiding/revealing objects
+- Made quest widget movable
+
 ### r104
 
 - Merged latest vanilla changes
