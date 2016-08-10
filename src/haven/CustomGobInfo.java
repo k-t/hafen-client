@@ -1,7 +1,7 @@
 package haven;
 
 public class CustomGobInfo extends GAttrib {
-    private static final Indir<Resource> minitower = Resource.remote().load("gfx/terobjs/arch/custom/stonetower");
+    //private static final Indir<Resource> minitower = Resource.remote().load("gfx/terobjs/arch/custom/stonetower");
 
     private final InfoCache<Class> spriteClass = new InfoCache<Class>() {
         protected Class getValue() {
