@@ -10,6 +10,7 @@ public class MinimapWnd extends Window {
     private final LocalMiniMap minimap;
     private IButton vclaimButton;
     private IButton pclaimButton;
+    private IButton realmButton;
     private IButton centerButton;
     private IButton radiusButton;
     private IButton radarButton;
@@ -102,6 +103,7 @@ public class MinimapWnd extends Window {
         minimap.visible = !folded;
         vclaimButton.visible = !folded;
         pclaimButton.visible = !folded;
+        realmButton.visible = !folded;
         centerButton.visible = !folded;
         radiusButton.visible = !folded;
         radarButton.visible = !folded;
@@ -114,7 +116,7 @@ public class MinimapWnd extends Window {
     }
 
     private void initbuttons() {
-        vclaimButton = add(new IButton("gfx/hud/lbtn-vil", "", "-d", "-h") {
+        pclaimButton = add(new IButton("gfx/hud/lbtn-vil", "", "-d", "-h") {
             { tooltip = Text.render("Display personal claims");  }
 
             public void click() {
@@ -123,9 +125,9 @@ public class MinimapWnd extends Window {
                 else
                     map.disol(0, 1);
             }
-        }, -6, -5);
+        }, -6, -10);
 
-        pclaimButton = add(new IButton("gfx/hud/lbtn-claim", "", "-d", "-h") {
+        vclaimButton = add(new IButton("gfx/hud/lbtn-claim", "", "-d", "-h") {
             { tooltip = Text.render("Display village claims"); }
 
             public void click() {
@@ -134,7 +136,19 @@ public class MinimapWnd extends Window {
                 else
                     map.disol(2, 3);
             }
-        }, -6, -10);
+        }, -6, -5);
+
+        realmButton = add(new IButton("gfx/hud/lbtn-rlm", "", "-d", "-h") {
+            {tooltip = Text.render("Display realms");}
+            public void click() {
+                if((map != null) && !map.visol(4))
+                    map.enol(4, 5);
+                else
+                    map.disol(4, 5);
+            }
+        }, -11, -12);
+
+        int x = 53;
 
         centerButton = add(new IButton("gfx/hud/buttons/center", "-u", "-d", "-d") {
             { tooltip = Text.render("Center map"); }
@@ -142,7 +156,7 @@ public class MinimapWnd extends Window {
             public void click() {
                 minimap.setOffset(Coord.z);
             }
-        }, 53, 3);
+        }, x+=25, 3);
 
         radiusButton = add(new IButton("gfx/hud/buttons/dispradius", "", "", "") {
             { tooltip = Text.render("Toggle view radius"); }
@@ -150,7 +164,7 @@ public class MinimapWnd extends Window {
             public void click() {
                 minimap.toggleRadius();
             }
-        }, 78, 3);
+        }, x+=25, 3);
 
         radarButton = add(new IButton("gfx/hud/buttons/radar", "", "", "") {
             { tooltip = Text.render("Select icons to display"); }
@@ -158,7 +172,7 @@ public class MinimapWnd extends Window {
             public void click() {
                 getparent(GameUI.class).iconwnd.toggle();
             }
-        }, 103, 3);
+        }, x+=25, 3);
 
         gridButton = add(new IButton("gfx/hud/buttons/grid", "", "", "") {
             { tooltip = Text.render("Toggle grid"); }
@@ -166,6 +180,6 @@ public class MinimapWnd extends Window {
             public void click() {
                 minimap.toggleGrid();
             }
-        }, 128, 3);
+        }, x+=25, 3);
     }
 }
