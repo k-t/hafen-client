@@ -1,5 +1,9 @@
 ## Changelog
 
+### r106
+
+- Merged latest vanilla changes
+
 ### r105
 
 - Fixed floating growth/damage text
