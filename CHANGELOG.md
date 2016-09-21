@@ -1,5 +1,9 @@
 ## Changelog
 
+### r107
+
+- Merged latest vanilla changes
+
 ### r106
 
 - Merged latest vanilla changes
