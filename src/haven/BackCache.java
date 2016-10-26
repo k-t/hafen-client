@@ -26,47 +26,58 @@
 
 package haven;
 
-public abstract class ListWidget<T> extends Widget {
-    public final int itemh;
-    public T sel;
-    public int selindex;
+import java.util.*;
+import java.util.function.*;
 
-    public ListWidget(Coord sz, int itemh) {
-	super(sz);
-	this.itemh = itemh;
+public class BackCache<K, V> {
+    public final Function<K, V> load;
+    public final BiConsumer<K, V> store;
+    public final BiConsumer<K, V> dispose;
+    private final Map<K, V> cache;
+
+    public BackCache(int size, Function<K, V> load, BiConsumer<K, V> store, BiConsumer<K, V> dispose) {
+	this.load = load;
+	this.store = store;
+	this.dispose = dispose;
+	this.cache = new Cache(size);
     }
 
-    protected abstract T listitem(int i);
-    protected abstract int listitems();
-    protected abstract void drawitem(GOut g, T item, int i);
+    public BackCache(int size, Function<K, V> load, BiConsumer<K, V> store) {
+	this(size, load, store, null);
+    }
 
-    public int find(T item) {
-	for(int i = 0; i < listitems(); i++) {
-	    if(listitem(i) == item)
-		return(i);
+    private class Cache extends LinkedHashMap<K, V> {
+	private final int size;
+
+	private Cache(int size) {
+	    super(size, 0.75f, true);
+	    this.size = size;
 	}
-	return(-1);
+
+	protected boolean removeEldestEntry(Map.Entry<K, V> eldest) {
+	    if(size() > size) {
+		if(dispose != null)
+		    dispose.accept(eldest.getKey(), eldest.getValue());
+		return(true);
+	    }
+	    return(false);
+	}
     }
 
-    public void change(T item) {
-        change(indexof(item));
+    public boolean cached(K key) {
+	return(cache.containsKey(key));
     }
 
-    public void change(int index) {
-        int count = listitems();
-        if (index >= 0 && index < count) {
-            selindex = index;
-            sel = listitem(index);
-        } else {
-            selindex = -1;
-            sel = null;
-        }
+    public V get(K key) {
+	if(cache.containsKey(key))
+	    return(cache.get(key));
+	V ret = load.apply(key);
+	cache.put(key, ret);
+	return(ret);
     }
 
-    public int indexof(T item) {
-        for (int i = 0; i < listitems(); i++)
-            if (listitem(i) == item)
-                return i;
-        return -1;
+    public void put(K key, V val) {
+	store.accept(key, val);
+	cache.put(key, val);
     }
 }

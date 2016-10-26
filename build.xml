@@ -80,10 +80,10 @@
   </target>
   
   <target name="res-jar" depends="build-env" unless="has-res-jar">
-
+    <get src="http://www.havenandhearth.com/java/builtin-res.jar" dest="lib/builtin-res.jar"
+	 usetimestamp="true" />
     <get src="http://www.havenandhearth.com/java/hafen-res.jar" dest="lib/hafen-res.jar"
 	 usetimestamp="true" />
-
     <get src="http://www.havenandhearth.com/java/builtin-res.jar" dest="lib/builtin-res.jar"
          usetimestamp="true" />
 
@@ -126,6 +126,7 @@
 	<include name="hafen-res.jar" />
 	<include name="builtin-res.jar" />
       </fileset>
+      <fileset dir="lib/jogl-natives" />
     </copy>
   </target>
   

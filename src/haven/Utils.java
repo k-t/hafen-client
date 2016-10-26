@@ -34,6 +34,7 @@ import java.lang.ref.*;
 import java.lang.reflect.*;
 import java.util.prefs.*;
 import java.util.*;
+import java.util.function.*;
 import java.awt.Graphics;
 import java.awt.Color;
 import java.awt.image.*;
@@ -1093,6 +1094,12 @@ public class Utils {
 	return(ret);
     }
 
+    public static <T, E extends T> T[] extend(T[] src, E[] ne) {
+	T[] ret = extend(src, 0, src.length + ne.length);
+	System.arraycopy(ne, 0, ret, src.length, ne.length);
+	return(ret);
+    }
+
     public static int[] extend(int[] src, int nl) {
 	int[] dst = new int[nl];
 	System.arraycopy(src, 0, dst, 0, Math.min(src.length, dst.length));
@@ -1122,7 +1129,27 @@ public class Utils {
 	if(!i.hasNext()) return(null);
 	return(i.next());
     }
-    
+
+    public static <T> T take(Iterable<T> c) {
+	Iterator<T> i = c.iterator();
+	if(!i.hasNext()) return(null);
+	T ret = i.next();
+	i.remove();
+	return(ret);
+    }
+
+    public static boolean strcheck(String str, IntPredicate p) {
+	for(int i = 0; i < str.length(); i++) {
+	    if(!p.test(str.charAt(i)))
+		return(false);
+	}
+	return(true);
+    }
+
+    public static <T> T or(T val, Supplier<T> els) {
+	return((val != null)?val:els.get());
+    }
+
     public static <T> T construct(Constructor<T> cons, Object... args) {
 	try {
 	    return(cons.newInstance(args));
@@ -1247,6 +1274,27 @@ public class Utils {
 	    t = t.getCause();
 	}
 	return(null);
+    }
+
+    public static class MapBuilder<K, V> {
+	private final Map<K, V> bk;
+
+	public MapBuilder(Map<K, V> bk) {
+	    this.bk = bk;
+	}
+
+	public MapBuilder<K, V> put(K k, V v) {
+	    bk.put(k, v);
+	    return(this);
+	}
+
+	public Map<K, V> map() {
+	    return(Collections.unmodifiableMap(bk));
+	}
+    }
+
+    public static <K, V> MapBuilder<K, V> map() {
+	return(new MapBuilder<K, V>(new HashMap<K, V>()));
     }
 
     public static final Comparator<Object> idcmd = new Comparator<Object>() {
