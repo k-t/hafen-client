@@ -40,6 +40,7 @@ import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.image.WritableRaster;
 
+import static com.sun.javafx.fxml.expression.Expression.add;
 import static haven.GameUILayout.*;
 import static haven.Inventory.invsq;
 
@@ -53,7 +54,9 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public MenuGrid menu;
     public MapView map;
     public LocalMiniMap mmap;
+
     public MinimapWnd mmapwnd;
+
     public Fightview fv;
     private List<Widget> meters = new LinkedList<Widget>();
     private List<Widget> cmeters = new LinkedList<Widget>();
@@ -62,6 +65,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     private Window invwnd, equwnd;
     public Inventory maininv;
     public CharWnd chrwdg;
+    public MapWnd mapfile;
     private Widget qqview;
     private Widget qqpanel;
     public BuddyWnd buddies;
@@ -105,11 +109,11 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		Coord mvc = map.rootxlate(ui.mc);
 		if(mvc.isect(Coord.z, map.sz)) {
 		    map.delay(map.new Hittest(mvc) {
-			    protected void hit(Coord pc, Coord mc, MapView.ClickInfo inf) {
+			    protected void hit(Coord pc, Coord2d mc, MapView.ClickInfo inf) {
 				if(inf == null)
-				    GameUI.this.wdgmsg("belt", slot, 1, ui.modflags(), mc);
+				    GameUI.this.wdgmsg("belt", slot, 1, ui.modflags(), mc.floor(OCache.posres));
 				else
-				    GameUI.this.wdgmsg("belt", slot, 1, ui.modflags(), mc, (int)inf.gob.id, inf.gob.rc);
+				    GameUI.this.wdgmsg("belt", slot, 1, ui.modflags(), mc.floor(OCache.posres), (int)inf.gob.id, inf.gob.rc.floor(OCache.posres));
 			    }
 
 			    protected void nohit(Coord pc) {
@@ -129,6 +133,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	    return(new GameUI(chrid, plid));
 	}
     }
+    
+    private final Coord minimapc;
 
     public GameUI(String chrid, long plid) {
 	this.chrid = chrid;
@@ -157,17 +163,13 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 			return(new Coord(GameUI.this.sz.x, Math.min(brpanel.c.y - 79, GameUI.this.sz.y - menupanel.sz.y)));
 		    }
 		}, new Coord(1, 0), true));
-	menu = brpanel.add(new MenuGrid() {
-        // HACK:
-        // intercept menu item usage and notify craft window about it to be able
-        // to determine which crafting receipt caused creation of Makewindow
-        @Override
-        public boolean use(Glob.Pagina pagina) {
-            boolean result = super.use(pagina);
-            if (result)
-                makewnd.setLastAction(pagina);
-            return result;
-        }}, 20, 34);
+
+	Tex lbtnbg = Resource.loadtex("gfx/hud/lbtn-bg");
+	blpanel.add(new Img(Resource.loadtex("gfx/hud/blframe")), 0, lbtnbg.sz().y - 33);
+	blpanel.add(new Img(lbtnbg), 0, 0);
+	minimapc = new Coord(4, 34 + (lbtnbg.sz().y - 33));
+	menu = brpanel.add(new MenuGrid(), 20, 34);
+
 	brpanel.add(new Img(Resource.loadtex("gfx/hud/brframe")), 0, 0);
 	menupanel.add(new MainMenu(), 0, 0);
 	foldbuttons();
@@ -241,13 +243,52 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     }
 
     public Equipory getEquipory() {
-    if (equwnd != null) {
-        Iterator<Equipory> iterator = equwnd.children(Equipory.class).iterator();
-        if (iterator.hasNext()) {
-            return iterator.next();
-        }
+	    if (equwnd != null) {
+		    Iterator<Equipory> iterator = equwnd.children(Equipory.class).iterator();
+		    if (iterator.hasNext()) {
+			    return iterator.next();
+		    }
+	    }
+	    return null;
     }
-    return null;
+
+    private void mapbuttons() {
+	blpanel.add(new IButton("gfx/hud/lbtn-claim", "", "-d", "-h") {
+		{tooltip = Text.render("Display personal claims");}
+		public void click() {
+		    if((map != null) && !map.visol(0))
+			map.enol(0, 1);
+		    else
+			map.disol(0, 1);
+		}
+	    }, 0, 0);
+	blpanel.add(new IButton("gfx/hud/lbtn-vil", "", "-d", "-h") {
+		{tooltip = Text.render("Display village claims");}
+		public void click() {
+		    if((map != null) && !map.visol(2))
+			map.enol(2, 3);
+		    else
+			map.disol(2, 3);
+		}
+	    }, 0, 0);
+	blpanel.add(new IButton("gfx/hud/lbtn-rlm", "", "-d", "-h") {
+		{tooltip = Text.render("Display realms");}
+		public void click() {
+		    if((map != null) && !map.visol(4))
+			map.enol(4, 5);
+		    else
+			map.disol(4, 5);
+		}
+	    }, 0, 0);
+	blpanel.add(new MenuButton("lbtn-map", 1, "Map ($col[255,255,0]{Ctrl+A})") {
+		public void click() {
+		    if((mapfile != null) && mapfile.show(!mapfile.visible)) {
+			mapfile.raise();
+			fitwdg(mapfile);
+			setfocus(mapfile);
+		    }
+		}
+	    });
     }
 
     /* Ice cream */
@@ -767,6 +808,13 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		help = adda(new HelpWnd(res), 0.5, 0.5);
 	    else
 		help.res = res;
+	} else if(msg == "map-mark") {
+	    long gobid = ((Integer)args[0]) & 0xffffffff;
+	    long oid = (Long)args[1];
+	    Indir<Resource> res = ui.sess.getres((Integer)args[2]);
+	    String nm = (String)args[3];
+	    if(mapfile != null)
+		mapfile.markobj(gobid, oid, res, nm);
 	} else {
 	    super.uimsg(msg, args);
 	}
@@ -778,6 +826,10 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	    return;
 	} else if((sender == chrwdg) && (msg == "close")) {
 	    chrwdg.hide();
+	    return;
+	} else if((sender == mapfile) && (msg == "close")) {
+	    mapfile.hide();
+	    return;
 	} else if((sender == help) && (msg == "close")) {
 	    ui.destroy(help);
 	    help = null;
@@ -1053,6 +1105,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     }
 
     private static final Resource errsfx = Resource.local().loadwait("sfx/error");
+    private long lasterrsfx = 0;
     public void error(String msg) {
 	msg(msg, new Color(192, 0, 0), new Color(255, 0, 0));
     // HACK: do not play annoying sound when game is starting
@@ -1064,9 +1117,14 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     }
 
     private static final Resource msgsfx = Resource.local().loadwait("sfx/msg");
+    private long lastmsgsfx = 0;
     public void msg(String msg) {
 	msg(msg, Color.WHITE, Color.WHITE);
-	Audio.play(msgsfx);
+	long now = System.currentTimeMillis();
+	if(now - lastmsgsfx > 100) {
+	    Audio.play(msgsfx);
+	    lastmsgsfx = now;
+	}
     }
 
     public void notification(String format, Object... args) {

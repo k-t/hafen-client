@@ -35,6 +35,7 @@ import java.util.TreeMap;
 
 import static haven.MCache.cmaps;
 import static haven.MCache.tilesz;
+import static javax.swing.text.html.HTML.Tag.HEAD;
 
 public class LocalMiniMap extends Widget implements Console.Directory {
 	private static final Resource plarrow = Resource.local().loadwait("gfx/hud/mmap/plarrow");
@@ -72,11 +73,11 @@ public class LocalMiniMap extends Widget implements Console.Directory {
             ui.disposables.remove(cache);
     }
     
-    public Coord p2c(Coord pc) {
-	return(pc.div(tilesz).sub(cc).add(sz.div(2)));
+    public Coord p2c(Coord2d pc) {
+	return(pc.floor(tilesz).sub(cc).add(sz.div(2)));
     }
 
-    public Coord c2p(Coord c) {
+    public Coord2d c2p(Coord c) {
 	return(c.sub(sz.div(2)).add(cc).mul(tilesz).add(tilesz.div(2)));
     }
 
@@ -148,9 +149,9 @@ public class LocalMiniMap extends Widget implements Console.Directory {
     public void tick(double dt) {
 	Gob pl = ui.sess.glob.oc.getgob(mv.plgob);
 	if(pl == null)
-	    this.cc = mv.cc.div(tilesz);
+	    this.cc = mv.cc.floor(tilesz);
 	else
-	    this.cc = pl.rc.div(tilesz);
+	    this.cc = pl.rc.floor(tilesz);
     }
 
     public void draw(GOut g) {
