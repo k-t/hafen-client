@@ -1,5 +1,9 @@
 ## Changelog
 
+### r110
+
+- Fixed crashes when minimap is clicked
+
 ### r109
 
 - Merged latest vanilla changes (credit to APXEOLOG)
