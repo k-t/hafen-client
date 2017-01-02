@@ -431,8 +431,8 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
     public Object staticp() {
 	if(seq == null) {
 	    int rs = 0;
-	    for(GAttrib attr : attr.values()) {
-		Object as = attr.staticp();
+	    for(GAttrib attrv : attr.values()) {
+		Object as = attrv.staticp();
 		if(as == Rendered.CONSTANS) {
 		} else if(as instanceof Static) {
 		} else if(as == SemiStatic.class) {

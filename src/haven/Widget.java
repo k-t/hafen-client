@@ -857,10 +857,6 @@ public class Widget {
     public void pack() {
 	resize(contentsz());
     }
-    
-    public void move(Coord c) {
-	this.c = c;
-    }
 
     public void resize(Coord sz) {
 	this.sz = sz;

@@ -26,14 +26,8 @@
 
 package haven;
 
-import java.awt.Color;
-import java.awt.Font;
+import java.awt.*;
 import java.awt.image.BufferedImage;
-
-import static haven.Button.bl;
-import static haven.Button.bm;
-import static haven.Button.br;
-import static haven.PUtils.*;
 
 public class Window extends Widget implements DTarget {
     public static final Tex bg = Resource.loadtex("gfx/hud/wnd/lg/bg");
@@ -119,43 +113,6 @@ public class Window extends Widget implements DTarget {
 
 
     public void cdraw(GOut g) { }
-
-    protected void drawframe(GOut g) {
-	Coord mdo, cbr;
-	g.image(cl, tlo);
-	mdo = tlo.add(cl.sz().x, 0);
-	cbr = mdo.add(cmw, cm.sz().y);
-	for(int x = 0; x < cmw; x += cm.sz().x)
-	    g.image(cm, mdo.add(x, 0), Coord.z, cbr);
-	g.image(cr, tlo.add(cl.sz().x + cmw, 0));
-	g.image(cap.tex(), tlo.add(cpo));
-	mdo = tlo.add(cl.sz().x + cmw + cr.sz().x, 0);
-	cbr = tlo.add(wsz.add(-tr.sz().x, tm.sz().y));
-	for(; mdo.x < cbr.x; mdo.x += tm.sz().x)
-	    g.image(tm, mdo, Coord.z, cbr);
-	g.image(tr, tlo.add(wsz.x - tr.sz().x, 0));
-
-	mdo = tlo.add(0, cl.sz().y);
-	cbr = tlo.add(lm.sz().x, wsz.y - bl.sz().y);
-	if(cbr.y - mdo.y >= lb.sz().y) {
-	    cbr.y -= lb.sz().y;
-	    g.image(lb, new Coord(tlo.x, cbr.y));
-	}
-	for(; mdo.y < cbr.y; mdo.y += lm.sz().y)
-	    g.image(lm, mdo, Coord.z, cbr);
-
-	mdo = tlo.add(wsz.x - rm.sz().x, tr.sz().y);
-	cbr = tlo.add(wsz.x, wsz.y - br.sz().y);
-	for(; mdo.y < cbr.y; mdo.y += rm.sz().y)
-	    g.image(rm, mdo, Coord.z, cbr);
-
-	g.image(bl, tlo.add(0, wsz.y - bl.sz().y));
-	mdo = tlo.add(bl.sz().x, wsz.y - bm.sz().y);
-	cbr = tlo.add(wsz.x - br.sz().x, wsz.y);
-	for(; mdo.x < cbr.x; mdo.x += bm.sz().x)
-	    g.image(bm, mdo, Coord.z, cbr);
-	g.image(br, tlo.add(wsz.sub(br.sz())));
-    }
 
     public void draw(GOut g) {
 	Coord bgc = new Coord();

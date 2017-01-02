@@ -54,7 +54,7 @@ public class ServerGridOverlay extends MapOverlay {
     @Override
     protected void refresh(Coord cut) {
         // TODO: coord conversion methods to make code like this readable?
-        this.ul = cut.sub(MapView.view, MapView.view).mul(cutsz).mul(tilesz).div(sgridsz);
+        this.ul = cut.sub(MapView.view, MapView.view).mul(cutsz).mul(tilesz).div(new Coord2d(sgridsz)).floor();
         this.location = Location.xlate(new Coord3f(this.ul.x * sgridsz.x, -this.ul.y * sgridsz.y, 0.0F));
 
 
@@ -69,7 +69,7 @@ public class ServerGridOverlay extends MapOverlay {
     }
 
     private Coord3f mapToScreen(Coord c) {
-        return new Coord3f((c.x - ul.x) * sgridsz.x, -(c.y - ul.y) * sgridsz.y, map.getz(c.mul(sgridsz).div(tilesz)));
+        return new Coord3f((c.x - ul.x) * sgridsz.x, -(c.y - ul.y) * sgridsz.y, map.getz(c.mul(sgridsz).div(tilesz.floor())));
     }
 
     private void addLineStrip(FloatBuffer vbuf, Coord3f... vertices) {

@@ -27,15 +27,11 @@
 package haven;
 
 import java.awt.*;
+import java.util.*;
 import java.util.List;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.TreeMap;
 
 import static haven.MCache.cmaps;
 import static haven.MCache.tilesz;
-import static javax.swing.text.html.HTML.Tag.HEAD;
 
 public class LocalMiniMap extends Widget implements Console.Directory {
 	private static final Resource plarrow = Resource.local().loadwait("gfx/hud/mmap/plarrow");
@@ -195,7 +191,7 @@ public class LocalMiniMap extends Widget implements Console.Directory {
 	try {
 		synchronized(ui.sess.glob.party.memb) {
 		    for(Party.Member m : ui.sess.glob.party.memb.values()) {
-			Coord mc;
+			Coord2d mc;
 			try {
                 mc = m.getc();
 			} catch(MCache.LoadingMap e) {
@@ -215,8 +211,8 @@ public class LocalMiniMap extends Widget implements Console.Directory {
 			g.chcolor();
             if (showradius && m.gobid == mv.plgob) {
                 // view radius is 9x9 "server" grids
-                Coord rc = p2c(mc.div(MCache.sgridsz).sub(4, 4).mul(MCache.sgridsz)).sub(off);
-                Coord rs = MCache.sgridsz.mul(9).div(tilesz);
+                Coord rc = p2c(mc.div(new Coord2d(MCache.sgridsz)).sub(4, 4).mul(new Coord2d(MCache.sgridsz))).sub(off);
+                Coord rs = new Coord2d(MCache.sgridsz).mul(9).div(tilesz).floor();
                 g.chcolor(255, 255, 255, 60);
                 g.frect(rc, rs);
                 g.chcolor(0, 0, 0, 128);

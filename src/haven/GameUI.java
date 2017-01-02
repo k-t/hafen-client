@@ -26,21 +26,20 @@
 
 package haven;
 
-import java.awt.image.BufferedImage;
 import haven.minimap.CustomIconGroup;
 import haven.minimap.CustomIconMatch;
 import haven.minimap.CustomIconWnd;
 import haven.tasks.*;
-import haven.tasks.AutoStudy;
 import org.apache.commons.io.FileUtils;
 
+import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
+import java.awt.image.WritableRaster;
 import java.io.File;
 import java.util.*;
-import java.awt.Color;
-import java.awt.event.KeyEvent;
-import java.awt.image.WritableRaster;
+import java.util.List;
 
-import static com.sun.javafx.fxml.expression.Expression.add;
 import static haven.GameUILayout.*;
 import static haven.Inventory.invsq;
 
@@ -163,10 +162,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 			return(new Coord(GameUI.this.sz.x, Math.min(brpanel.c.y - 79, GameUI.this.sz.y - menupanel.sz.y)));
 		    }
 		}, new Coord(1, 0), true));
-
 	Tex lbtnbg = Resource.loadtex("gfx/hud/lbtn-bg");
-	blpanel.add(new Img(Resource.loadtex("gfx/hud/blframe")), 0, lbtnbg.sz().y - 33);
-	blpanel.add(new Img(lbtnbg), 0, 0);
 	minimapc = new Coord(4, 34 + (lbtnbg.sz().y - 33));
 	menu = brpanel.add(new MenuGrid(), 20, 34);
 
@@ -250,45 +246,6 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		    }
 	    }
 	    return null;
-    }
-
-    private void mapbuttons() {
-	blpanel.add(new IButton("gfx/hud/lbtn-claim", "", "-d", "-h") {
-		{tooltip = Text.render("Display personal claims");}
-		public void click() {
-		    if((map != null) && !map.visol(0))
-			map.enol(0, 1);
-		    else
-			map.disol(0, 1);
-		}
-	    }, 0, 0);
-	blpanel.add(new IButton("gfx/hud/lbtn-vil", "", "-d", "-h") {
-		{tooltip = Text.render("Display village claims");}
-		public void click() {
-		    if((map != null) && !map.visol(2))
-			map.enol(2, 3);
-		    else
-			map.disol(2, 3);
-		}
-	    }, 0, 0);
-	blpanel.add(new IButton("gfx/hud/lbtn-rlm", "", "-d", "-h") {
-		{tooltip = Text.render("Display realms");}
-		public void click() {
-		    if((map != null) && !map.visol(4))
-			map.enol(4, 5);
-		    else
-			map.disol(4, 5);
-		}
-	    }, 0, 0);
-	blpanel.add(new MenuButton("lbtn-map", 1, "Map ($col[255,255,0]{Ctrl+A})") {
-		public void click() {
-		    if((mapfile != null) && mapfile.show(!mapfile.visible)) {
-			mapfile.raise();
-			fitwdg(mapfile);
-			setfocus(mapfile);
-		    }
-		}
-	    });
     }
 
     /* Ice cream */
@@ -1407,14 +1364,15 @@ public class GameUI extends ConsoleHost implements Console.Directory {
             Coord mvc = map.rootxlate(ui.mc);
             if(mvc.isect(Coord.z, map.sz)) {
                 map.delay(map.new Hittest(mvc) {
-                    protected void hit(Coord pc, Coord mc, MapView.ClickInfo inf) {
-                        if (inf == null)
-                            ui.gui.wdgmsg("belt", slot, 1, ui.modflags(), mc);
-                        else
-                            ui.gui.wdgmsg("belt", slot, 1, ui.modflags(), mc, (int) inf.gob.id, inf.gob.rc);
-                    }
+	                @Override
+	                protected void hit(Coord pc, Coord2d mc, MapView.ClickInfo inf) {
+		                if (inf == null)
+			                ui.gui.wdgmsg("belt", slot, 1, ui.modflags(), mc);
+		                else
+			                ui.gui.wdgmsg("belt", slot, 1, ui.modflags(), mc, (int) inf.gob.id, inf.gob.rc);
+	                }
 
-                    protected void nohit(Coord pc) {
+	                protected void nohit(Coord pc) {
                         ui.gui.wdgmsg("belt", slot, 1, ui.modflags());
                     }
                 });

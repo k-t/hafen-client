@@ -26,20 +26,20 @@
 
 package haven;
 
-import static haven.MCache.cutsz;
-import static haven.MCache.tilesz;
-import static haven.MCache.sgridsz;
-import static haven.OCache.posres;
-import haven.Resource.Tile;
-
 import haven.GLProgram.VarID;
 
-import java.awt.Color;
+import javax.media.opengl.GL;
+import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.lang.ref.Reference;
+import java.lang.ref.WeakReference;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-import java.lang.ref.*;
-import java.lang.reflect.*;
-import javax.media.opengl.*;
+import java.util.List;
+
+import static haven.MCache.*;
+import static haven.OCache.posres;
 
 public class MapView extends PView implements DTarget, Console.Directory {
     public static final int view = 2;
@@ -442,7 +442,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
     this.holdtimer = new Timer();
     this.gridOverlay = new GridOverlay(glob.map, cutsz.mul(view * 2 + 1));
     this.gridOverlay.setVisible(false);
-    this.serverGridOverlay = new ServerGridOverlay(glob.map, cutsz.mul(view * 2 + 1).mul(tilesz).div(sgridsz).add(2, 2));
+    this.serverGridOverlay = new ServerGridOverlay(glob.map, cutsz.mul(view * 2 + 1).mul(tilesz).floor().div(sgridsz).add(2, 2));
     this.serverGridOverlay.setVisible(Config.showServerGrid.get());
     this.partyHighlight = new PartyHighlight(glob.party, plgob);
 	setcanfocus(true);
@@ -1308,7 +1308,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 		throw(new Loading(camload));
 		Gob pl = player();
 		if(pl != null)
-			this.cc = new Coord(pl.getc());
+			this.cc = new Coord2d(pl.getc());
 	    undelay(delayed, g);
 	    super.draw(g);
 	    undelay(delayed2, g);

@@ -26,19 +26,24 @@
 
 package haven;
 
-import java.util.*;
-import java.util.function.*;
-import java.awt.Color;
-import java.awt.event.KeyEvent;
+import haven.BuddyWnd.GroupSelector;
 import haven.MapFile.Marker;
 import haven.MapFile.PMarker;
 import haven.MapFile.SMarker;
-import haven.MapFileWidget.*;
-import haven.MapFileWidget.Location;
-import haven.BuddyWnd.GroupSelector;
-import static haven.MiniMap.plx;
-import static haven.MCache.tilesz;
+import haven.MapFileWidget.Locator;
+import haven.MapFileWidget.MapLocator;
+import haven.MapFileWidget.SpecLocator;
+
+import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.util.*;
+import java.util.List;
+import java.util.function.Function;
+import java.util.function.Predicate;
+
 import static haven.MCache.cmaps;
+import static haven.MCache.tilesz;
+import static haven.MiniMap.plx;
 
 public class MapWnd extends Window {
     public static final Resource markcurs = Resource.local().loadwait("gfx/hud/curs/flag");
@@ -291,7 +296,7 @@ public class MapWnd extends Window {
     private static final Tex sizer = Resource.loadtex("gfx/hud/wnd/sizer");
     protected void drawframe(GOut g) {
 	g.image(sizer, ctl.add(csz).sub(sizer.sz()));
-	super.drawframe(g);
+	//super.drawframe(g);
     }
 
     public boolean keydown(KeyEvent ev) {
