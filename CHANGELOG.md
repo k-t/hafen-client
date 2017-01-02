@@ -1,5 +1,9 @@
 ## Changelog
 
+### r109
+
+- Merged latest vanilla changes (credit to APXEOLOG)
+
 ### r108
 
 - Merged latest vanilla changes
