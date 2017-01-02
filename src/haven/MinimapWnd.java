@@ -125,7 +125,7 @@ public class MinimapWnd extends Window {
                 else
                     map.disol(0, 1);
             }
-        }, -6, -10);
+        }, -20, -20);
 
         vclaimButton = add(new IButton("gfx/hud/lbtn-claim", "", "-d", "-h") {
             { tooltip = Text.render("Display village claims"); }
@@ -136,7 +136,7 @@ public class MinimapWnd extends Window {
                 else
                     map.disol(2, 3);
             }
-        }, -6, -5);
+        }, 30, -10);
 
         realmButton = add(new IButton("gfx/hud/lbtn-rlm", "", "-d", "-h") {
             {tooltip = Text.render("Display realms");}
@@ -146,7 +146,7 @@ public class MinimapWnd extends Window {
                 else
                     map.disol(4, 5);
             }
-        }, -11, -12);
+        }, 22, -41);
 
         int x = 53;
 
