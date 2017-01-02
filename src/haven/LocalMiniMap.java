@@ -32,6 +32,7 @@ import java.util.List;
 
 import static haven.MCache.cmaps;
 import static haven.MCache.tilesz;
+import static haven.OCache.posres;
 
 public class LocalMiniMap extends Widget implements Console.Directory {
 	private static final Resource plarrow = Resource.local().loadwait("gfx/hud/mmap/plarrow");
@@ -239,11 +240,11 @@ public class LocalMiniMap extends Widget implements Console.Directory {
     Coord coff = c.add(off);
 	Gob gob = findicongob(coff);
 	if(gob == null)
-	    mv.wdgmsg("click", rootpos().add(c), c2p(coff), button, ui.modflags());
+	    mv.wdgmsg("click", rootpos().add(c), c2p(coff).floor(posres), button, ui.modflags());
 	else {
         if (ui.modmeta && button == 1)
             tooltip = gob.getres().name;
-	    mv.wdgmsg("click", rootpos().add(c), c2p(coff), button, ui.modflags(), 0, (int)gob.id, gob.rc, 0, -1);
+	    mv.wdgmsg("click", rootpos().add(c), c2p(coff).floor(posres), button, ui.modflags(), 0, (int)gob.id, gob.rc.floor(posres), 0, -1);
     }
 	return(true);
     }
