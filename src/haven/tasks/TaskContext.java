@@ -49,7 +49,7 @@ class TaskContext {
     }
 
     public Gob findObjectByNames(int radius, String... names) {
-        Coord plc = player().rc;
+        Coord2d plc = player().rc;
         double min = radius;
         Gob nearest = null;
         synchronized (ui.sess.glob.oc) {

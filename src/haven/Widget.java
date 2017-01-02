@@ -749,7 +749,7 @@ public class Widget {
 				f = ((n == null) || !n.hasparent(this))?child:n;
 			    } else {
 				Widget p = f.rprev();
-				f = ((p == null) || !p.hasparent(this))?lchild:p;
+				f = ((p == null) || (p == this) || !p.hasparent(this))?lchild:p;
 			    }
 			    if(f.canfocus)
 				break;
@@ -857,13 +857,18 @@ public class Widget {
     public void pack() {
 	resize(contentsz());
     }
-    
+
     public void resize(Coord sz) {
 	this.sz = sz;
 	for(Widget ch = child; ch != null; ch = ch.next)
 	    ch.presize();
 	if(parent != null)
 	    parent.cresize(this);
+    }
+
+    public void move(Area a) {
+	move(a.ul);
+	resize(a.sz());
     }
 
     public void resize(int x, int y) {

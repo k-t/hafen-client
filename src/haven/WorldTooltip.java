@@ -42,9 +42,9 @@ public class WorldTooltip {
         } else return null;
     }
 
-    public static String getTooltipFromMap(MCache m, Coord mc) {
+    public static String getTooltipFromMap(MCache m, Coord2d mc) {
         try {
-            int tile = m.gettile(mc.div(MCache.tilesz));
+            int tile = m.gettile(mc.div(MCache.tilesz).floor());
             Resource r = m.tilesetr(tile);
             if (r != null)
                 return r.name;

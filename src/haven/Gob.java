@@ -31,7 +31,9 @@ import java.util.*;
 public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
     public static final String PLAYER_RES = "gfx/borka/body";
 
-    public Coord rc, sc;
+    public Coord2d rc;
+    public Coord sc;
+
     public Coord3f sczu;
     public double a;
     public boolean virtual = false;
@@ -164,8 +166,9 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
     }
 
     public static class Static {}
+    public static class SemiStatic {}
 
-    public Gob(Glob glob, Coord c, long id, int frame) {
+    public Gob(Glob glob, Coord2d c, long id, int frame) {
 	this.glob = glob;
 	this.rc = c;
 	this.id = id;
@@ -173,7 +176,7 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 	loc.tick();
     }
 
-    public Gob(Glob glob, Coord c) {
+    public Gob(Glob glob, Coord2d c) {
 	this(glob, c, -1, 0);
     }
 
@@ -231,7 +234,7 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 	}
     }
 
-    public void move(Coord c, double a) {
+    public void move(Coord2d c, double a) {
 	Moving m = getattr(Moving.class);
 	if(m != null)
 	    m.move(c);
@@ -249,9 +252,7 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
     }
 
     public Coord3f getrc() {
-		return (rc != Coord.z)
-			? new Coord3f(rc.x, rc.y, glob.map.getcz(rc))
-			: Coord3f.o;
+	    return(glob.map.getzp(rc));
     }
 
     private Class<? extends GAttrib> attrclass(Class<? extends GAttrib> cl) {
@@ -429,13 +430,15 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
     private Object seq = null;
     public Object staticp() {
 	if(seq == null) {
-	    Object fs = new Static();
-	    for(GAttrib attr : attr.values()) {
-		Object as = attr.staticp();
+	    int rs = 0;
+	    for(GAttrib attrv : attr.values()) {
+		Object as = attrv.staticp();
 		if(as == Rendered.CONSTANS) {
 		} else if(as instanceof Static) {
+		} else if(as == SemiStatic.class) {
+		    rs = Math.max(rs, 1);
 		} else {
-		    fs = null;
+		    rs = 2;
 		    break;
 		}
 	    }
@@ -443,12 +446,18 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 		Object os = ol.staticp();
 		if(os == Rendered.CONSTANS) {
 		} else if(os instanceof Static) {
+		} else if(os == SemiStatic.class) {
+		    rs = Math.max(rs, 1);
 		} else {
-		    fs = null;
+		    rs = 2;
 		    break;
 		}
 	    }
-	    seq = fs;
+	    switch(rs) {
+	    case 0: seq = new Static(); break;
+	    case 1: seq = new SemiStatic(); break;
+	    default: seq = null; break;
+	    }
 	}
 	return((seq == DYNAMIC)?null:seq);
     }

@@ -49,7 +49,7 @@ public class GridOverlay extends MapOverlay {
     @Override
     protected void refresh(Coord cut) {
         this.ul = cut.sub(MapView.view, MapView.view).mul(cutsz);
-        this.location = Location.xlate(new Coord3f(ul.x * tilesz.x, -ul.y * tilesz.y, 0.0F));
+        this.location = Location.xlate(new Coord3f((float)(ul.x * tilesz.x), (float)(-ul.y * tilesz.y), 0.0F));
         Coord c = new Coord();
         FloatBuffer vbuf = getBackBuffer();
         vbuf.rewind();
@@ -60,7 +60,7 @@ public class GridOverlay extends MapOverlay {
     }
 
     private Coord3f mapToScreen(Coord c) {
-        return new Coord3f((c.x - ul.x) * tilesz.x, -(c.y - ul.y) * tilesz.y, map.getz(c));
+        return new Coord3f((float)((c.x - ul.x) * tilesz.x), (float)(-(c.y - ul.y) * tilesz.y), map.getz(c));
     }
 
     private void addLineStrip(FloatBuffer vbuf, Coord3f... vertices) {

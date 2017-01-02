@@ -27,11 +27,8 @@
 package haven;
 
 import java.awt.*;
+import java.util.*;
 import java.util.List;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.TreeMap;
 
 import static haven.MCache.cmaps;
 import static haven.MCache.tilesz;
@@ -72,11 +69,11 @@ public class LocalMiniMap extends Widget implements Console.Directory {
             ui.disposables.remove(cache);
     }
     
-    public Coord p2c(Coord pc) {
-	return(pc.div(tilesz).sub(cc).add(sz.div(2)));
+    public Coord p2c(Coord2d pc) {
+	return(pc.floor(tilesz).sub(cc).add(sz.div(2)));
     }
 
-    public Coord c2p(Coord c) {
+    public Coord2d c2p(Coord c) {
 	return(c.sub(sz.div(2)).add(cc).mul(tilesz).add(tilesz.div(2)));
     }
 
@@ -148,9 +145,9 @@ public class LocalMiniMap extends Widget implements Console.Directory {
     public void tick(double dt) {
 	Gob pl = ui.sess.glob.oc.getgob(mv.plgob);
 	if(pl == null)
-	    this.cc = mv.cc.div(tilesz);
+	    this.cc = mv.cc.floor(tilesz);
 	else
-	    this.cc = pl.rc.div(tilesz);
+	    this.cc = pl.rc.floor(tilesz);
     }
 
     public void draw(GOut g) {
@@ -194,7 +191,7 @@ public class LocalMiniMap extends Widget implements Console.Directory {
 	try {
 		synchronized(ui.sess.glob.party.memb) {
 		    for(Party.Member m : ui.sess.glob.party.memb.values()) {
-			Coord mc;
+			Coord2d mc;
 			try {
                 mc = m.getc();
 			} catch(MCache.LoadingMap e) {
@@ -214,8 +211,8 @@ public class LocalMiniMap extends Widget implements Console.Directory {
 			g.chcolor();
             if (showradius && m.gobid == mv.plgob) {
                 // view radius is 9x9 "server" grids
-                Coord rc = p2c(mc.div(MCache.sgridsz).sub(4, 4).mul(MCache.sgridsz)).sub(off);
-                Coord rs = MCache.sgridsz.mul(9).div(tilesz);
+                Coord rc = p2c(mc.div(new Coord2d(MCache.sgridsz)).sub(4, 4).mul(new Coord2d(MCache.sgridsz))).sub(off);
+                Coord rs = new Coord2d(MCache.sgridsz).mul(9).div(tilesz).floor();
                 g.chcolor(255, 255, 255, 60);
                 g.frect(rc, rs);
                 g.chcolor(0, 0, 0, 128);

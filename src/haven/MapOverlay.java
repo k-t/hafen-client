@@ -13,8 +13,8 @@ public abstract class MapOverlay implements Rendered {
         this.map = map;
     }
 
-    public final void update(Coord c) {
-        Coord tile = c.div(MCache.tilesz);
+    public final void update(Coord2d c) {
+        Coord tile = c.div(MCache.tilesz).floor();
         Coord cut = tile.div(cutsz);
         try {
             if (!cut.equals(lastCut)) {

@@ -26,10 +26,8 @@
 
 package haven;
 
-import java.awt.Color;
-import java.awt.Font;
+import java.awt.*;
 import java.awt.image.BufferedImage;
-import static haven.PUtils.*;
 
 public class Window extends Widget implements DTarget {
     public static final Tex bg = Resource.loadtex("gfx/hud/wnd/lg/bg");
@@ -86,7 +84,7 @@ public class Window extends Widget implements DTarget {
 	this.mrgn = lg?dlmrgn:dsmrgn;
 	cbtn = add(new IButton(cbtni[0], cbtni[1], cbtni[2], false));
 	chcap(cap);
-	resize(sz);
+	resize2(sz);
 	setfocustab(true);
     }
 
@@ -113,8 +111,8 @@ public class Window extends Widget implements DTarget {
 	return (cap != null) ? cap.text : null;
     }
 
-    public void cdraw(GOut g) {
-    }
+
+    public void cdraw(GOut g) { }
 
     public void draw(GOut g) {
 	Coord bgc = new Coord();
@@ -153,7 +151,7 @@ public class Window extends Widget implements DTarget {
 	cbtn.c = xlate(new Coord(ctl.x + csz.x - cbtn.sz.x, ctl.y).add(2, -2), false);
     }
 
-    public void resize(Coord sz) {
+    private void resize2(Coord sz) {
 	asz = sz;
 	csz = asz.add(mrgn.mul(2));
 	wsz = csz.add(tlm).add(brm);
@@ -163,6 +161,10 @@ public class Window extends Widget implements DTarget {
 	cbtn.c = xlate(tlo.add(wsz.x - cbtn.sz.x - 3, wtl.y + 4), false);
 	for(Widget ch = child; ch != null; ch = ch.next)
 	    ch.presize();
+    }
+
+    public void resize(Coord sz) {
+	resize2(sz);
     }
 
     public void uimsg(String msg, Object... args) {
