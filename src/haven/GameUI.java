@@ -1367,9 +1367,9 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	                @Override
 	                protected void hit(Coord pc, Coord2d mc, MapView.ClickInfo inf) {
 		                if (inf == null)
-			                ui.gui.wdgmsg("belt", slot, 1, ui.modflags(), mc);
+			                ui.gui.wdgmsg("belt", slot, 1, ui.modflags(), mc.floor(OCache.posres));
 		                else
-			                ui.gui.wdgmsg("belt", slot, 1, ui.modflags(), mc, (int) inf.gob.id, inf.gob.rc);
+			                ui.gui.wdgmsg("belt", slot, 1, ui.modflags(), mc.floor(OCache.posres), (int) inf.gob.id, inf.gob.rc.floor(OCache.posres));
 	                }
 
 	                protected void nohit(Coord pc) {
