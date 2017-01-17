@@ -26,12 +26,12 @@
 
 package haven;
 
-import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.*;
-import java.util.function.*;
-import static haven.ItemInfo.find;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
+
 import static haven.Inventory.sqsz;
 
 public class WItem extends Widget implements DTarget {
@@ -294,19 +294,7 @@ public class WItem extends Widget implements DTarget {
 
     private void drawquality(GOut g, ItemQuality q) {
         List<ItemQuality.Element> elements = new ArrayList<ItemQuality.Element>();
-        switch (Config.showQualityMode.get()) {
-            case SHOW_QUALITY_ALL:
-                elements.add(q.essence);
-                elements.add(q.substance);
-                elements.add(q.vitality);
-                break;
-            case SHOW_QUALITY_AVG:
-                elements.add(q.average);
-                break;
-            case SHOW_QUALITY_MAX:
-                elements.add(q.getMaxElement());
-                break;
-        }
+	    elements.add(q.quality);
 
         Coord c = new Coord(0, -4);
         if (Config.showQualityBackground.get()) {

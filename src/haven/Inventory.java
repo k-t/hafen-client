@@ -162,7 +162,7 @@ public class Inventory extends Widget implements DTarget {
             ItemQuality aq = a.quality.get();
             ItemQuality bq = b.quality.get();
             if (aq != null && bq != null)
-                return (int)Math.signum(aq.average.value - bq.average.value);
+                return (int)Math.signum(aq.quality.value - bq.quality.value);
             if (aq == null)
                 return (bq == null) ? 0 : -1;
             return 1;
