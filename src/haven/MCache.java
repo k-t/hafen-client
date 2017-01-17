@@ -52,9 +52,14 @@ public class MCache {
     Map<Integer, Defrag> fragbufs = new TreeMap<Integer, Defrag>();
 
     public static class LoadingMap extends Loading {
-	public LoadingMap() {super("Waiting for map data...");}
+	public final Coord gc;
+	public LoadingMap(Coord gc) {
+	    super("Waiting for map data...");
+	    this.gc = gc;
+	}
 	public LoadingMap(Loading cause) {
 	    super(cause);
+	    this.gc = null;
 	}
     }
 
@@ -391,7 +396,7 @@ public class MCache {
 		cached = grids.get(gc);
 		if(cached == null) {
 		    request(gc);
-		    throw(new LoadingMap());
+		    throw(new LoadingMap(gc));
 		}
 	    }
 	    return(cached);
@@ -482,8 +487,10 @@ public class MCache {
 	    synchronized(req) {
 		if(req.containsKey(c)) {
 		    Grid g = grids.get(c);
-		    if(g == null)
+		    if(g == null) {
 			grids.put(c, g = new Grid(c));
+			cached = null;
+		    }
 		    g.fill(msg);
 		    req.remove(c);
 		    olseq++;
@@ -572,6 +579,7 @@ public class MCache {
 		    g.dispose();
 		grids.clear();
 		req.clear();
+		cached = null;
 	    }
 	}
     }
@@ -600,6 +608,7 @@ public class MCache {
 		    if((gc.x < ul.x) || (gc.y < ul.y) || (gc.x > lr.x) || (gc.y > lr.y))
 			i.remove();
 		}
+		cached = null;
 	    }
 	}
     }
