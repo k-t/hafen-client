@@ -1,14 +1,16 @@
 package haven;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MinimapCache implements Disposable {
     private static final SimpleDateFormat datefmt = new SimpleDateFormat("yyyy-MM-dd HH.mm.ss");
@@ -25,13 +27,30 @@ public class MinimapCache implements Disposable {
     private final Map<Coord, MinimapTile> tiles = new HashMap<Coord, MinimapTile>();
     private final Map<TextureAtlas.Region, Coord> used = new HashMap<TextureAtlas.Region, Coord>();
 
-    public MinimapCache(MinimapRenderer renderer) {
+    public final MapFile save;
+    private final MCache map;
+
+    private static volatile WeakReference<MinimapCache> cacheInstance = null;
+
+    public static synchronized MinimapCache getInstance() {
+        return cacheInstance != null ? cacheInstance.get() : null;
+    }
+
+
+    public MinimapCache(MinimapRenderer renderer, MCache map) {
         this.renderer = renderer;
         this.atlas = new TextureAtlas(1024, 1024);
         this.pool = new TextureAtlas.Region[100];
         for (int i = 0; i < this.pool.length; i++)
             this.pool[i] = this.atlas.add(100, 100);
         this.nextPoolIndex = 0;
+        this.map = map;
+        if(ResCache.global != null) {
+            save = MapFile.load(ResCache.global);
+        } else {
+            save = null;
+        }
+        cacheInstance = new WeakReference<MinimapCache>(this);
     }
 
     @Override
@@ -65,6 +84,7 @@ public class MinimapCache implements Disposable {
                     tile.img.update(img);
                 }
                 rendering.remove(key);
+                save.update(map, grid.gc);
             }
         }
         return tile;
@@ -72,11 +92,11 @@ public class MinimapCache implements Disposable {
 
     public void checkSession(MCache.Grid grid) {
         // might be wrong, but it seems that character position is always (0, 0) after transitions
-        if (cgrid == null || (grid.gc.x == 0 && grid.gc.y == 0 && cgrid.id != grid.id)) {
+        if (cgrid == null || grid == null || (grid.gc.x == 0 && grid.gc.y == 0 && cgrid.id != grid.id)) {
             // discard all cached tiles
             clearCaches();
             cgrid = grid;
-            if (Config.minimapEnableSave.get()) {
+            if (Config.minimapEnableSave.get() && grid != null) {
                 sp = grid.gc;
                 session = datefmt.format(new Date(System.currentTimeMillis()));
                 if (true) {

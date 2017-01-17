@@ -26,9 +26,11 @@
 
 package haven;
 
-import java.util.*;
-import java.lang.ref.*;
 import haven.Resource.Tileset;
+
+import java.lang.ref.Reference;
+import java.lang.ref.SoftReference;
+import java.util.*;
 
 public class MCache {
     public static final Coord2d tilesz = new Coord2d(11, 11);
@@ -386,6 +388,11 @@ public class MCache {
 	    trim(ul, lr);
 	} else if(type == 2) {
 	    trimall();
+		// We need this to prevent minimap bug with fast instance change
+		MinimapCache minimapCache = MinimapCache.getInstance();
+		if (minimapCache != null) {
+			minimapCache.checkSession(null);
+		}
 	}
     }
 

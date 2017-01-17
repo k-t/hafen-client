@@ -552,11 +552,20 @@ public class GameUI extends ConsoleHost implements Console.Directory {
             ui.destroy(mmapwnd);
             layout.removeDraggable(mmapwnd);
         }
+		if(mapfile != null) {
+			ui.destroy(mapfile);
+			mapfile = null;
+		}
 		mmap = new LocalMiniMap(Config.minimapSize.get(), map);
 		mmapwnd = new MinimapWnd(Config.minimapPosition.get(), mmap.sz, map, mmap);
         layout.addDraggable(mmapwnd, new RelativePosition(HAlign.Left, VAlign.Top, new Coord(500, 100)), true, true);
 		add(mmapwnd);
 		mmapwnd.pack();
+		if(mmap.cache.save != null) {
+			mapfile = new MapWnd(mmap.cache.save, map, new Coord(700, 500), "Map");
+			mapfile.hide();
+			add(mapfile, 50, 50);
+		}
 	} else if(place == "fight") {
 	    fv = urpanel.add((Fightview)child, 0, 0);
 	} else if(place == "fsess") {
@@ -791,6 +800,13 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	    ui.destroy(help);
 	    help = null;
 	    return;
+	} else if ("show-big-map".equals(msg)) {
+		if((mapfile != null) && mapfile.show(!mapfile.visible)) {
+			mapfile.raise();
+			fitwdg(mapfile);
+			setfocus(mapfile);
+		}
+		return;
 	}
 	super.wdgmsg(sender, msg, args);
     }

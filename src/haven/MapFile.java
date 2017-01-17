@@ -26,13 +26,20 @@
 
 package haven;
 
-import java.util.*;
-import java.util.concurrent.locks.*;
-import java.io.*;
-import java.awt.Color;
+import haven.Defer.Future;
+
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
-import haven.Defer.Future;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.*;
+import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
 import static haven.MCache.cmaps;
 
 public class MapFile {
