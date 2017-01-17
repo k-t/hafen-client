@@ -26,8 +26,9 @@
 
 package haven;
 
-import static java.lang.Math.PI;
 import java.util.Iterator;
+
+import static java.lang.Math.PI;
 
 public class Coord implements Comparable<Coord>, java.io.Serializable {
     public int x, y;
