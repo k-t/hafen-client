@@ -1396,9 +1396,9 @@ public class GameUI extends ConsoleHost implements Console.Directory {
         } else
             wdgmsg("belt", slot, 1, ui.modflags());
 
-        if (belt[slot] != null) {
+        /*if (belt[slot] != null) {
             makewnd.setLastAction(new Glob.Pagina(belt[slot]));
-        }
+        }*/
     }
 
     public void refreshProgress() {
