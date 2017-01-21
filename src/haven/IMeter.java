@@ -37,6 +37,9 @@ public class IMeter extends Widget {
     static Coord msz = new Coord(75, 10);
     Indir<Resource> bg;
     List<Meter> meters;
+
+	private static final Text.Foundry tipF = new Text.Foundry(Text.sans, 10);
+	private Tex tipTex;
     
     @RName("im")
     public static class $_ implements Factory {
@@ -77,6 +80,10 @@ public class IMeter extends Widget {
 		g.chcolor(m.c);
 		g.frect(off, new Coord(w, msz.y));
 	    }
+		if (tipTex != null && Config.showUserMeterValues.get()) {
+			g.chcolor();
+			g.image(tipTex, sz.div(2).sub(tipTex.sz().div(2)).add(10, -1));
+		}
 	    g.chcolor();
 	    g.image(bg, Coord.z);
 	} catch(Loading l) {
@@ -95,6 +102,10 @@ public class IMeter extends Widget {
                 Audio.play(ponysfx, Config.alarmVolume.get() / 1000.0f);
         }
 	} else {
+		if (msg == "tip" && Config.showUserMeterValues.get()) {
+			String value = ((String)args[0]).split(":")[1].replaceAll("(\\(.+\\))", "");
+			tipTex = Text.renderstroked(value.trim(), Color.WHITE, Color.BLACK, tipF).tex();
+		}
 	    super.uimsg(msg, args);
 	}
     }

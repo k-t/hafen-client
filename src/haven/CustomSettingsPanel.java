@@ -217,6 +217,8 @@ public class CustomSettingsPanel extends OptWnd.Panel {
         }, new Coord(0, y));
         y += 20;
         panel.add(new PrefCheckBox("Always show extended tooltips", Config.alwaysShowExtendedTooltips), new Coord(0, y));
+        y += 20;
+        panel.add(new PrefCheckBox("Show meter values", Config.showUserMeterValues), new Coord(0, y));
         panel.pack();
         return panel;
     }

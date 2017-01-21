@@ -122,6 +122,7 @@ public class Config {
     public static Pref<Boolean> hideKinInfoForNonPlayers = new Pref<Boolean>("hide.nonplayer.kininfo", true, TYPE_BOOL);
     public static Pref<Integer> autopickRadius = new Pref<Integer>("autopick.radius", 3, TYPE_INT);
     public static Pref<Boolean> alwaysShowExtendedTooltips = new Pref<Boolean>("tooltips.extended", false, TYPE_BOOL);
+    public static Pref<Boolean> showUserMeterValues = new Pref<Boolean>("haven.meters.values", true, TYPE_BOOL);
     public static Pref<Boolean> hideModeEnabled = new Pref<Boolean>("hide.mode", false, TYPE_BOOL);
     public static Pref<Boolean> showGobPaths = new Pref<Boolean>("display.gob.paths", false, TYPE_BOOL);
     public static Pref<Boolean> displayMiniTowers = new Pref<Boolean>("display.minitowers", false, TYPE_BOOL);
