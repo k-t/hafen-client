@@ -125,6 +125,9 @@ public class GItem extends AWidget implements ItemInfo.SpriteOwner, GSprite.Owne
         if (meterCompletionTime != null)
             list.add(meterCompletionTime);
         info = ItemInfo.buildinfo(this, list.toArray());
+        try {
+            info.add(new ItemInfo.AdHoc(this, "Res: " + getres().name));
+        } catch (Exception e) {}
     }
 	return(info);
     }
