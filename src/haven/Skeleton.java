@@ -507,8 +507,14 @@ public class Skeleton {
 		    int mask = Sprite.decnum(sdt);
 		    Collection<PoseMod> poses = new ArrayList<PoseMod>(16);
 		    for(ResPose p : res.layers(ResPose.class)) {
-			if((p.id < 0) || ((mask & (1 << p.id)) != 0))
-			    poses.add(p.forskel(owner, skel, p.defmode));
+			if((p.id < 0) || ((mask & (1 << p.id)) != 0)) {
+				if (Config.disableSomeAnimations.get()) {
+					if (Config.disableAnimationsSet.contains(res.name) ||
+							(res.name.contains("kritter") && res.name.endsWith("/idle")))
+						continue;
+				}
+				poses.add(p.forskel(owner, skel, p.defmode));
+			}
 		    }
 		    if(poses.size() == 0)
 			return(skel.nilmod());
@@ -921,6 +927,8 @@ public class Skeleton {
 	    Collection<Track> tracks = new LinkedList<Track>();
 	    Collection<FxTrack> fx = new LinkedList<FxTrack>();
 	    while(!buf.eom()) {
+			if (Config.disableSomeAnimations.get() && Config.disableAnimationsSet.contains(res.name))
+				break;
 		String bnm = buf.string();
 		if(bnm.equals("{ctl}")) {
 		    fx.add(parsefx(buf));

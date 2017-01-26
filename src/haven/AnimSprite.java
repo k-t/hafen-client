@@ -36,6 +36,8 @@ public class AnimSprite extends Sprite {
 	    public Sprite create(Owner owner, Resource res, Message sdt) {
 		if(res.layer(MeshAnim.Res.class) == null)
 		    return(null);
+		if (Config.disableSomeAnimations.get() && Config.disableAnimationsSet.contains(res.name))
+			return null;
 		return(new AnimSprite(owner, res, sdt));
 	    }
 	};
