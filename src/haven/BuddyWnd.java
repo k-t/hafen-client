@@ -50,11 +50,11 @@ public class BuddyWnd extends Widget implements Iterable<BuddyWnd.Buddy> {
 	new Color(255, 255, 255),
 	new Color(0, 255, 0),
 	new Color(255, 0, 0),
-	new Color(0, 0, 255),
+	new Color(30, 180, 255),
 	new Color(0, 255, 255),
 	new Color(255, 255, 0),
 	new Color(255, 0, 255),
-	new Color(255, 0, 128),
+	new Color(255, 190, 190),
     };
     private Comparator<Buddy> bcmp;
     private Comparator<Buddy> alphacmp = new Comparator<Buddy>() {
