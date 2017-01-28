@@ -418,6 +418,8 @@ public class CharWnd extends Window {
 	private double lvlt = 0.0;
 	private Text ct;
 	private int cbv, ccv;
+		private Text baseValue;
+		private boolean isBuffed = false;
 
 	private Attr(Glob glob, String attr, Color bg) {
 	    super(new Coord(attrw, attrf.height() + 2));
@@ -442,12 +444,16 @@ public class CharWnd extends Window {
 		if(ccv > cbv) {
 		    c = buff;
 		    tooltip = Text.render(String.format("%d + %d", cbv, ccv - cbv));
+			isBuffed = true;
 		} else if(ccv < cbv) {
 		    c = debuff;
 		    tooltip = Text.render(String.format("%d - %d", cbv, cbv - ccv));
+			isBuffed = true;
 		} else {
 		    tooltip = null;
+			isBuffed = false;
 		}
+		baseValue = attrf.render(Integer.toString(attr.base), Color.WHITE);
 		ct = attrf.render(Integer.toString(ccv), c);
 	    }
 	    if((lvlt > 0.0) && ((lvlt -= dt) < 0))
@@ -464,7 +470,9 @@ public class CharWnd extends Window {
 	    Coord cn = new Coord(0, sz.y / 2);
 	    g.aimage(img, cn.add(5, 0), 0, 0.5);
 	    g.aimage(rnm.tex(), cn.add(img.sz().x + 10, 1), 0, 0.5);
-	    g.aimage(ct.tex(), cn.add(sz.x - 7, 1), 1, 0.5);
+		g.aimage(baseValue.tex(), cn.add(sz.x - 7, 1), 1, 0.5);
+		if (isBuffed)
+			g.aimage(ct.tex(), cn.add(sz.x - 50, 1), 1, 0.5);
 	}
 
 	public void lvlup() {
