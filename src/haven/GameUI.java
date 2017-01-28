@@ -150,7 +150,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	    chat.resize(chat.savedw, chat.savedh);
 	}
 	beltwdg.raise();
-    eqbelt = add(new EquipBelt("equip", 6, 7));
+    eqbelt = add(new EquipBelt("equip", 6, 7, 5));
     ulpanel = add(new Hidepanel("gui-ul", null, new Coord(-1, -1), false));
     umpanel = add(new Hidepanel("gui-um", null, new Coord( 0, -1), false));
 	urpanel = add(new Hidepanel("gui-ur", null, new Coord( 1, -1), false));
