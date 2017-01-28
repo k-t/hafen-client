@@ -98,6 +98,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     private final GameUILayout layout;
     private boolean ignoreTrackingSound;
 
+	public static GameUI instance;
+
     public abstract class Belt extends Widget {
 	public Belt(Coord sz) {
 	    super(sz);
@@ -136,6 +138,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     private final Coord minimapc;
 
     public GameUI(String chrid, long plid) {
+		instance = this;
 	this.chrid = chrid;
 	this.plid = plid;
 	setcanfocus(true);
