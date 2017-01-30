@@ -116,4 +116,8 @@ public class KinInfo extends GAttrib {
 		}
 	    }
 	};
+
+	public Object staticp() {
+		return null;
+	}
 }
