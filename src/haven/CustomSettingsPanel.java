@@ -165,7 +165,7 @@ public class CustomSettingsPanel extends OptWnd.Panel {
             }
         }, new Coord(0, y));
         y += 25;
-        panel.add(new PrefCheckBox("Disable some animations", Config.disableSomeAnimations), new Coord(0, y));
+        panel.add(new PrefCheckBox("Disable some animations (requires restart)", Config.disableSomeAnimations), new Coord(0, y));
         panel.pack();
         return panel;
     }
