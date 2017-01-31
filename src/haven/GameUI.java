@@ -167,7 +167,15 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		}, new Coord(1, 0), true));
 	Tex lbtnbg = Resource.loadtex("gfx/hud/lbtn-bg");
 	minimapc = new Coord(4, 34 + (lbtnbg.sz().y - 33));
-	menu = brpanel.add(new MenuGrid(), 20, 34);
+	menu = brpanel.add(new MenuGrid() {
+		@Override
+		public boolean use(Glob.Pagina pagina) {
+			boolean result = super.use(pagina);
+			if (result)
+				makewnd.setLastAction(pagina);
+			return result;
+		}
+	}, 20, 34);
 
 	brpanel.add(new Img(Resource.loadtex("gfx/hud/brframe")), 0, 0);
 	menupanel.add(new MainMenu(), 0, 0);
@@ -1399,9 +1407,9 @@ public class GameUI extends ConsoleHost implements Console.Directory {
         } else
             wdgmsg("belt", slot, 1, ui.modflags());
 
-        /*if (belt[slot] != null) {
+        if (belt[slot] != null) {
             makewnd.setLastAction(new Glob.Pagina(belt[slot]));
-        }*/
+        }
     }
 
     public void refreshProgress() {
