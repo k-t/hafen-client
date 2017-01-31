@@ -529,6 +529,15 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	    ntab(p, btn);
 	    btn.tooltip = Text.render(p.cap);
 	}
+
+		@Override
+		public boolean show(boolean show) {
+			if (show) {
+				if (GameUI.instance.buddies != null)
+					GameUI.instance.buddies.clearSearchField();
+			}
+			return super.show(show);
+		}
     }
 
     public static class DraggedItem {

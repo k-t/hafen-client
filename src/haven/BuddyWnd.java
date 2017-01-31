@@ -27,6 +27,7 @@
 package haven;
 
 import java.awt.Color;
+import java.awt.event.KeyEvent;
 import java.util.*;
 import java.text.Collator;
 
@@ -38,6 +39,7 @@ public class BuddyWnd extends Widget implements Iterable<BuddyWnd.Buddy> {
     private Button sbgroup;
     private Button sbstatus;
     private TextEntry pname, charpass, opass;
+	private TextEntry kinFilterField;
     private Buddy editing = null;
     private TextEntry nicksel;
     private GroupSelector grpsel;
@@ -192,12 +194,44 @@ public class BuddyWnd extends Widget implements Iterable<BuddyWnd.Buddy> {
     }
 
     private class BuddyList extends Listbox<Buddy> {
+
+		private String kinFilter = null;
+
 	public BuddyList(int w, int h) {
 	    super(w, h, 20);
 	}
 
-	public Buddy listitem(int idx) {return(buddies.get(idx));}
-	public int listitems() {return(buddies.size());}
+	public Buddy listitem(int idx) {
+		if (kinFilter == null || kinFilter.equals(""))
+			return(buddies.get(idx));
+
+		int num = 0;
+		synchronized (buddies) {
+			for (int i = 0; i < buddies.size(); i++) {
+				if (buddies.get(i).name.toLowerCase().contains(kinFilter) && num++ == idx)
+					return buddies.get(i);
+			}
+		}
+
+		return buddies.get(idx);
+	}
+	public int listitems() {
+		if (kinFilter == null || kinFilter.equals(""))
+			return(buddies.size());
+
+		int num = 0;
+		synchronized (buddies) {
+			for (int i = 0; i < buddies.size(); i++) {
+				if (buddies.get(i).name.toLowerCase().contains(kinFilter))
+					num++;
+			}
+		}
+		return num;
+	}
+
+		public void setKinFilter(String f) {
+			kinFilter = f;
+		}
 
 	protected void drawbg(GOut g) {
 	    g.chcolor(0, 0, 0, 128);
@@ -312,8 +346,23 @@ public class BuddyWnd extends Widget implements Iterable<BuddyWnd.Buddy> {
 	y += 35;
 
 	bl = add(new BuddyList(width - Window.wbox.bisz().x, 7), new Coord(Window.wbox.btloff().x, y));
+	y += 145;
 	Frame.around(this, Collections.singletonList(bl));
-	y += 195;
+	y += 5;
+	add(new Label("Filter:"), new Coord(0, y));
+	y += 15;
+	kinFilterField = add(new TextEntry(width, "") {
+		@Override
+		public boolean type(char c, KeyEvent ev) {
+			if (!parent.visible)
+				return false;
+
+			boolean ret = buf.key(ev);
+			bl.setKinFilter(text.toLowerCase());
+			return ret;
+		}
+	}, new Coord(0, y));
+	y += 35;
 
 	add(new Label("Sort by:"), new Coord(0, y));
 	y += 15;
@@ -502,4 +551,9 @@ public class BuddyWnd extends Widget implements Iterable<BuddyWnd.Buddy> {
 	}
 	super.destroy();
     }
+
+	public void clearSearchField() {
+		kinFilterField.settext("");
+		bl.setKinFilter("");
+	}
 }
