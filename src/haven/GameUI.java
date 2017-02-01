@@ -1034,7 +1034,9 @@ public class GameUI extends ConsoleHost implements Console.Directory {
             Config.showGobPaths.set(!Config.showGobPaths.get());
             return true;
         } else if (alt && keycode == KeyEvent.VK_L) {
-			act("lo");
+			try {
+				ui.cons.run("lo");
+			} catch (Exception e) {}
 			return true;
 		}
     }
