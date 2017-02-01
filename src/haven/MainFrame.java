@@ -419,8 +419,8 @@ public class MainFrame extends java.awt.Frame implements Runnable, Console.Direc
     try {
         PrintStream out = new PrintStream(new FileOutputStream(log, true), true);
         out.format("[%s] ===== Client started =====%n", timestampf.format(new Date()));
-        System.setOut(out);
-        System.setErr(out);
+        //System.setOut(out);
+        //System.setErr(out);
     } catch (FileNotFoundException e) {
         e.printStackTrace();
     }

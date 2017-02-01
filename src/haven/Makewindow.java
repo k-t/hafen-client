@@ -26,9 +26,9 @@
 
 package haven;
 
+import java.awt.*;
 import java.util.*;
-import java.awt.Font;
-import java.awt.Color;
+import java.util.List;
 
 public class Makewindow extends Widget {
     Widget obtn, cbtn;
@@ -140,16 +140,40 @@ public class Makewindow extends Widget {
 	    c = c.add(Inventory.sqsz.x, 0);
 	}
 	if(qmod != null) {
-	    g.image(qmodl.tex(), new Coord(0, qmy + 4));
-	    c = new Coord(xoff, qmy);
-	    for(Indir<Resource> qm : qmod) {
-		try {
-		    Tex t = qm.get().layer(Resource.imgc).tex();
-		    g.image(t, c);
-		    c = c.add(t.sz().x + 1, 0);
-		} catch(Loading l) {
+		double statValue = 1, statCount = 0;
+
+		g.image(qmodl.tex(), new Coord(0, qmy + 4));
+		c = new Coord(xoff, qmy);
+		for (Indir<Resource> qm : qmod) {
+			try {
+				Tex t = qm.get().layer(Resource.imgc).tex();
+				g.image(t, c);
+				c = c.add(t.sz().x + 1, 0);
+
+				GameUI gameUI = getparent(GameUI.class);
+				if (gameUI != null && gameUI.chrwdg != null) {
+					String name = qm.get().basename();
+					for (CharWnd.SAttr attr : gameUI.chrwdg.skill) {
+						if (name.equals(attr.attr.nm)) {
+							statCount++;
+							statValue *= attr.attr.comp;
+							break;
+						}
+					}
+					for (CharWnd.Attr attr : gameUI.chrwdg.base) {
+						if (name.equals(attr.attr.nm)) {
+							statCount++;
+							statValue *= attr.attr.comp;
+							break;
+						}
+					}
+				}
+			} catch (Loading l) {
+			}
 		}
-	    }
+		if (statCount > 0) {
+			g.image(Text.render(String.format("Softcap: %.0f", Math.floor(Math.pow(statValue, 1.0f/statCount)))).tex(), c.add(5, 3));
+		}
 	}
 	c = new Coord(xoff, outy);
 	for(Spec s : outputs) {

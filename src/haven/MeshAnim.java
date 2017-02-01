@@ -175,6 +175,7 @@ public class MeshAnim {
 		time = len;
 	    float ct, nt;
 	    int l = 0, r = frames.length;
+		if (r == 0) return;
 	    while(true) {
 		int c = l + ((r - l) >> 1);
 		ct = frames[c].time;
@@ -258,6 +259,8 @@ public class MeshAnim {
 		float len = buf.float32();
 		List<Frame> frames = new LinkedList<Frame>();
 		while(true) {
+			if (Config.disableSomeAnimations.get() && Config.disableAnimationsSet.contains(res.name))
+				break;
 		    int t = buf.uint8();
 		    if(t == 0)
 			break;

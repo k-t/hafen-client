@@ -33,6 +33,7 @@ import static java.lang.Math.PI;
 public class FlowerMenu extends Widget {
     public static final Color pink = new Color(255, 0, 128);
     public static final Color ptc = Color.YELLOW;
+	public static final Color petalGreen = Color.GREEN;
     public static final Text.Foundry ptf = new Text.Foundry(Text.dfont, 12);
     public static final IBox pbox = Window.wbox;
     public static final IBox customBox = new IBox("gfx/hud/tab", "tl", "tr", "bl", "br", "extvl", "extvr", "extht", "exthb");
@@ -63,7 +64,7 @@ public class FlowerMenu extends Widget {
 	public Petal(String name) {
 	    super(Coord.z);
 	    this.name = name;
-	    text = ptf.render(name, ptc);
+	    text = ptf.render(name, name.startsWith("Travel along ") ? petalGreen : ptc);
 	    resize(text.sz().x + 25, ph);
 	}
 
@@ -213,6 +214,8 @@ public class FlowerMenu extends Widget {
 		tt = -1;
 		opts[i].ta = ta;
 		opts[i].tr = tr;
+			if (opts.length >= 5)
+				opts[i].tr += 30;
 		i++;
 	    }
 	    if(++p >= (ppl * l)) {
@@ -258,7 +261,9 @@ public class FlowerMenu extends Widget {
 	    organizeCustom(opts);
     else
         organize(opts);
-	new Opening();
+	//new Opening();
+		for(Petal p : opts)
+			p.move(p.ta, p.tr);
     }
 
     public boolean mousedown(Coord c, int button) {
@@ -271,7 +276,8 @@ public class FlowerMenu extends Widget {
 
     public void uimsg(String msg, Object... args) {
 	if(msg == "cancel") {
-	    new Cancel();
+	    //new Cancel();
+		ui.destroy(FlowerMenu.this);
 	    mg.remove();
 	    kg.remove();
 	} else if(msg == "act") {

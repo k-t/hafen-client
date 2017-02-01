@@ -418,6 +418,8 @@ public class CharWnd extends Window {
 	private double lvlt = 0.0;
 	private Text ct;
 	private int cbv, ccv;
+		private Text baseValue;
+		private boolean isBuffed = false;
 
 	private Attr(Glob glob, String attr, Color bg) {
 	    super(new Coord(attrw, attrf.height() + 2));
@@ -442,12 +444,16 @@ public class CharWnd extends Window {
 		if(ccv > cbv) {
 		    c = buff;
 		    tooltip = Text.render(String.format("%d + %d", cbv, ccv - cbv));
+			isBuffed = true;
 		} else if(ccv < cbv) {
 		    c = debuff;
 		    tooltip = Text.render(String.format("%d - %d", cbv, cbv - ccv));
+			isBuffed = true;
 		} else {
 		    tooltip = null;
+			isBuffed = false;
 		}
+		baseValue = attrf.render(Integer.toString(attr.base), Color.WHITE);
 		ct = attrf.render(Integer.toString(ccv), c);
 	    }
 	    if((lvlt > 0.0) && ((lvlt -= dt) < 0))
@@ -464,7 +470,9 @@ public class CharWnd extends Window {
 	    Coord cn = new Coord(0, sz.y / 2);
 	    g.aimage(img, cn.add(5, 0), 0, 0.5);
 	    g.aimage(rnm.tex(), cn.add(img.sz().x + 10, 1), 0, 0.5);
-	    g.aimage(ct.tex(), cn.add(sz.x - 7, 1), 1, 0.5);
+		g.aimage(baseValue.tex(), cn.add(sz.x - 7, 1), 1, 0.5);
+		if (isBuffed)
+			g.aimage(ct.tex(), cn.add(sz.x - 50, 1), 1, 0.5);
 	}
 
 	public void lvlup() {
@@ -820,6 +828,7 @@ public class CharWnd extends Window {
 	public static final Color[] stcol = {
 	    new Color(255, 255, 64), new Color(64, 255, 64), new Color(255, 64, 64),
 	};
+	public static final char[] stsym = {'\u2022', '\u2713', '\u2717'};
 	public final int id;
 	public Indir<Resource> res;
 	public String title;
@@ -953,9 +962,7 @@ public class CharWnd extends Window {
 		buf.append(res.layer(Resource.pagina).text);
 		buf.append("\n");
 		for(Condition cond : this.cond) {
-		    buf.append(RichText.Parser.col2a(stcol[cond.done]));
-		    buf.append("{ \u2022 ");
-		    buf.append(cond.desc);
+		    buf.append(String.format("%s{ %c %s", RichText.Parser.col2a(stcol[cond.done]), stsym[cond.done], cond.desc));
 		    if(cond.status != null) {
 			buf.append(' ');
 			buf.append(cond.status);
@@ -1081,7 +1088,7 @@ public class CharWnd extends Window {
 		}
 
 		private Text ct(Condition c) {
-		    return(qcfnd.render(" \u2022 " + c.desc + ((c.status != null)?(" " + c.status):""), stcol[c.done]));
+		    return(qcfnd.render(" " + stsym[c.done] + " " + c.desc + ((c.status != null)?(" " + c.status):""), stcol[c.done]));
 		}
 
 		void update() {
@@ -1529,9 +1536,10 @@ public class CharWnd extends Window {
 	    base.add(aw = battr.add(new Attr(glob, "prc", every), wbox.btloff().add(x, y))); y += aw.sz.y;
 	    base.add(aw = battr.add(new Attr(glob, "csm", other), wbox.btloff().add(x, y))); y += aw.sz.y;
 	    base.add(aw = battr.add(new Attr(glob, "dex", every), wbox.btloff().add(x, y))); y += aw.sz.y;
-	    base.add(aw = battr.add(new Attr(glob, "psy", other), wbox.btloff().add(x, y))); y += aw.sz.y;
+	    base.add(aw = battr.add(new Attr(glob, "wil", other), wbox.btloff().add(x, y))); y += aw.sz.y;
+	    base.add(aw = battr.add(new Attr(glob, "psy", every), wbox.btloff().add(x, y))); y += aw.sz.y;
 	    Frame.around(battr, base);
-	    y += 24;
+	    y += 16;
 	    battr.add(new Img(catf.render("Food Event Points").tex()), new Coord(x - 5, y)); y += 35;
 	    feps = battr.add(new FoodMeter(), new Coord(x, y));
 
@@ -1539,7 +1547,7 @@ public class CharWnd extends Window {
 	    battr.add(new Img(catf.render("Food Satiations").tex()), new Coord(x - 5, y)); y += 35;
 	    cons = battr.add(new Constipations(attrw, base.size()), wbox.btloff().add(x, y)); y += cons.sz.y;
 	    Frame.around(battr, Collections.singletonList(cons));
-	    y += 24;
+	    y += 16;
 	    battr.add(new Img(catf.render("Hunger Level").tex()), new Coord(x - 5, y)); y += 35;
 	    glut = battr.add(new GlutMeter(), new Coord(x, y));
 	}
@@ -1558,17 +1566,19 @@ public class CharWnd extends Window {
 	    skill.add(aw = sattr.add(new SAttr(glob, "stealth", every), wbox.btloff().add(x, y))); y += aw.sz.y;
 	    skill.add(aw = sattr.add(new SAttr(glob, "sewing", other), wbox.btloff().add(x, y))); y += aw.sz.y;
 	    skill.add(aw = sattr.add(new SAttr(glob, "smithing", every), wbox.btloff().add(x, y))); y += aw.sz.y;
-	    skill.add(aw = sattr.add(new SAttr(glob, "carpentry", other), wbox.btloff().add(x, y))); y += aw.sz.y;
-	    skill.add(aw = sattr.add(new SAttr(glob, "cooking", every), wbox.btloff().add(x, y))); y += aw.sz.y;
-	    skill.add(aw = sattr.add(new SAttr(glob, "farming", other), wbox.btloff().add(x, y))); y += aw.sz.y;
-	    skill.add(aw = sattr.add(new SAttr(glob, "survive", every), wbox.btloff().add(x, y))); y += aw.sz.y;
+	    skill.add(aw = sattr.add(new SAttr(glob, "masonry", other), wbox.btloff().add(x, y))); y += aw.sz.y;
+	    skill.add(aw = sattr.add(new SAttr(glob, "carpentry", every), wbox.btloff().add(x, y))); y += aw.sz.y;
+	    skill.add(aw = sattr.add(new SAttr(glob, "cooking", other), wbox.btloff().add(x, y))); y += aw.sz.y;
+	    skill.add(aw = sattr.add(new SAttr(glob, "farming", every), wbox.btloff().add(x, y))); y += aw.sz.y;
+	    skill.add(aw = sattr.add(new SAttr(glob, "survive", other), wbox.btloff().add(x, y))); y += aw.sz.y;
+	    skill.add(aw = sattr.add(new SAttr(glob, "lore", every), wbox.btloff().add(x, y))); y += aw.sz.y;
 	    Frame.around(sattr, skill);
 
 	    x = 260; y = 0;
 	    sattr.add(new Img(catf.render("Study Report").tex()), new Coord(x - 5, y)); y += 35;
 	    y += 151;
 	    int rx = x + attrw - 10;
-	    Frame.around(sattr, Area.sized(new Coord(x, y).add(wbox.btloff()), new Coord(attrw, 80)));
+	    Frame.around(sattr, Area.sized(new Coord(x, y).add(wbox.btloff()), new Coord(attrw, 96)));
 	    sattr.add(new Label("Experience points:"), new Coord(x + 15, y + 10));
 	    sattr.add(new EncLabel(new Coord(rx, y + 10)));
 	    sattr.add(new Label("Learning points:"), new Coord(x + 15, y + 25));
@@ -1596,13 +1606,13 @@ public class CharWnd extends Window {
 			}
 			CharWnd.this.wdgmsg("sattr", args.toArray(new Object[0]));
 		    }
-		}, new Coord(rx - 75, y + 55));
+		}, new Coord(rx - 75, y + 70));
 	    sattr.add(new Button(75, "Reset") {
 		    public void click() {
 			for(SAttr attr : skill)
 			    attr.reset();
 		    }
-		}, new Coord(rx - 160, y + 55));
+		}, new Coord(rx - 160, y + 70));
 	}
 
 	Tabs.Tab skills;

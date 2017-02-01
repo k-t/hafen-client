@@ -164,6 +164,8 @@ public class CustomSettingsPanel extends OptWnd.Panel {
                 Config.cupboardScale.set(val);
             }
         }, new Coord(0, y));
+        y += 25;
+        panel.add(new PrefCheckBox("Disable some animations (requires restart)", Config.disableSomeAnimations), new Coord(0, y));
         panel.pack();
         return panel;
     }
@@ -204,8 +206,8 @@ public class CustomSettingsPanel extends OptWnd.Panel {
             }
         }, new Coord(0, y));
         y += 20;
-        panel.add(new PrefCheckBox("Disable flower menu animations", Config.enableMenuAnimation, true), new Coord(0, y));
-        y += 20;
+        //panel.add(new PrefCheckBox("Disable flower menu animations", Config.enableMenuAnimation, true), new Coord(0, y));
+        //y += 20;
         panel.add(new PrefCheckBox("Use alternative look for flower menus", Config.enableCustomFlowerMenu), new Coord(0, y));
         y += 20;
         panel.add(new PrefCheckBox("Display additional belt for Fn keys", Config.showCustomFKeysBelt) {
@@ -217,6 +219,8 @@ public class CustomSettingsPanel extends OptWnd.Panel {
         }, new Coord(0, y));
         y += 20;
         panel.add(new PrefCheckBox("Always show extended tooltips", Config.alwaysShowExtendedTooltips), new Coord(0, y));
+        y += 20;
+        panel.add(new PrefCheckBox("Show meter values", Config.showUserMeterValues), new Coord(0, y));
         panel.pack();
         return panel;
     }

@@ -39,7 +39,7 @@ public class LocalMiniMap extends Widget implements Console.Directory {
     private static final Resource plalarm = Resource.local().loadwait("sfx/alarmplayer");
 
     public final MapView mv;
-	private final MinimapCache cache;
+	public final MinimapCache cache;
     private Coord cc = null;
     private Coord off = Coord.z;
     private Coord doff;
@@ -51,7 +51,7 @@ public class LocalMiniMap extends Widget implements Console.Directory {
     public LocalMiniMap(Coord sz, MapView mv) {
 	super(sz);
 	this.mv = mv;
-	this.cache = new MinimapCache(new MinimapRenderer(mv.ui.sess.glob.map));
+	this.cache = new MinimapCache(new MinimapRenderer(mv.ui.sess.glob.map), mv.ui.sess.glob.map);
     this.showradius = Config.minimapShowRadius.get();
     this.showgrid = Config.minimapShowGrid.get();
     }

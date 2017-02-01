@@ -53,22 +53,22 @@ public class StudyWnd extends Window {
         public int texp, tw, tenc;
         private final Text.UText<?> texpt = new Text.UText<Integer>(Text.std) {
             public Integer value() {return(texp);}
-            public String text(Integer v) {return(Utils.thformat(v));}
+            public String text(Integer v) {return Integer.toString(v) + " / " + Integer.toString(GameUI.instance.chrwdg.exp);}
         };
         private final Text.UText<?> twt = new Text.UText<String>(Text.std) {
-            public String value() {return(tw + "/" + ui.sess.glob.cattr.get("int").comp);}
+            public String value() {return(tw + " / " + ui.sess.glob.cattr.get("int").comp);}
         };
         private final Text.UText<?> tenct = new Text.UText<Integer>(Text.std) {
             public Integer value() {return(tenc);}
-            public String text(Integer v) {return(Integer.toString(tenc));}
+            public String text(Integer v) {return(Integer.toString(tenc) + " / " + GameUI.instance.chrwdg.enc);}
         };
 
         private StudyInfo(Coord sz, Widget study) {
             super(sz);
             this.study = study;
             add(new Label("Attention:"), 2, 2);
-            add(new Label("Experience cost:"), 2, 18);
-            add(new Label("Learning points:"), 2, 34);
+            add(new Label("Exp.:"), 2, 18);
+            add(new Label("LP:"), 2, 34);
         }
 
         private void upd() {

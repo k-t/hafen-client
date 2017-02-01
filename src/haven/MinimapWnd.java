@@ -10,6 +10,7 @@ public class MinimapWnd extends Window {
     private final LocalMiniMap minimap;
     private IButton vclaimButton;
     private IButton pclaimButton;
+    private IButton mapButton;
     private IButton realmButton;
     private IButton centerButton;
     private IButton radiusButton;
@@ -116,7 +117,17 @@ public class MinimapWnd extends Window {
     }
 
     private void initbuttons() {
-        pclaimButton = add(new IButton("gfx/hud/lbtn-vil", "", "-d", "-h") {
+        int x = 10;
+
+        mapButton = add(new IButton("custom/gfx/hud/lbtn-map", "", "-d", "-h") {
+            { tooltip = Text.render("Display big map");  }
+
+            public void click() {
+                wdgmsg("show-big-map");
+            }
+        }, x, 3);
+
+        pclaimButton = add(new IButton("custom/gfx/hud/lbtn-vil", "", "-d", "-h") {
             { tooltip = Text.render("Display personal claims");  }
 
             public void click() {
@@ -125,9 +136,9 @@ public class MinimapWnd extends Window {
                 else
                     map.disol(0, 1);
             }
-        }, -20, -20);
+        }, x+=31, 3);
 
-        vclaimButton = add(new IButton("gfx/hud/lbtn-claim", "", "-d", "-h") {
+        vclaimButton = add(new IButton("custom/gfx/hud/lbtn-claim", "", "-d", "-h") {
             { tooltip = Text.render("Display village claims"); }
 
             public void click() {
@@ -136,9 +147,9 @@ public class MinimapWnd extends Window {
                 else
                     map.disol(2, 3);
             }
-        }, 30, -10);
+        }, x+=25, 3);
 
-        realmButton = add(new IButton("gfx/hud/lbtn-rlm", "", "-d", "-h") {
+        realmButton = add(new IButton("custom/gfx/hud/lbtn-rlm", "", "-d", "-h") {
             {tooltip = Text.render("Display realms");}
             public void click() {
                 if((map != null) && !map.visol(4))
@@ -146,9 +157,9 @@ public class MinimapWnd extends Window {
                 else
                     map.disol(4, 5);
             }
-        }, 22, -41);
+        }, x+=25, 3);
 
-        int x = 53;
+
 
         centerButton = add(new IButton("gfx/hud/buttons/center", "-u", "-d", "-d") {
             { tooltip = Text.render("Center map"); }

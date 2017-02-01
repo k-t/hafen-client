@@ -26,6 +26,8 @@
 
 package haven;
 
+import haven.res.ui.tt.WearFactory;
+
 import java.util.*;
 import java.awt.image.BufferedImage;
 import java.awt.Graphics;
@@ -269,7 +271,12 @@ public abstract class ItemInfo {
 		} else {
 		    throw(new ClassCastException("Unexpected info specification " + a[0].getClass()));
 		}
-		InfoFactory f = ttres.getcode(InfoFactory.class, true);
+		//InfoFactory f = ttres.getcode(InfoFactory.class, true);
+			InfoFactory f;
+			if (ttres.name.equals("ui/tt/wear"))
+				f = new WearFactory();
+			else
+				f = ttres.getcode(InfoFactory.class, true);
 		ItemInfo inf = f.build(owner, a);
 		if(inf != null)
 		    ret.add(inf);

@@ -33,6 +33,7 @@ public class Inventory extends Widget implements DTarget {
     public static final Coord sqsz = new Coord(33, 33);
     private static final Comparator<WItem> qComparator = new AvgQualityComparator();
     private static final Comparator<WItem> descQComparator = Collections.reverseOrder(qComparator);
+    public boolean dropul = true;
     public Coord isz;
     Map<GItem, WItem> wmap = new HashMap<GItem, WItem>();
 
@@ -102,8 +103,13 @@ public class Inventory extends Widget implements DTarget {
     }
 
     public boolean drop(Coord cc, Coord ul) {
-	wdgmsg("drop", ul.add(sqsz.div(2)).div(invsq.sz()));
-        return(true);
+	Coord dc;
+	if(dropul)
+	    dc = ul.add(sqsz.div(2)).div(sqsz);
+	else
+	    dc = cc.div(sqsz);
+	wdgmsg("drop", dc);
+	return(true);
     }
 	
     public boolean iteminteract(Coord cc, Coord ul) {
@@ -114,6 +120,10 @@ public class Inventory extends Widget implements DTarget {
 	if(msg.equals("sz")) {
 	    isz = (Coord)args[0];
 	    resize(invsq.sz().add(new Coord(-1, -1)).mul(isz).add(new Coord(1, 1)));
+	} else if(msg == "mode") {
+	    dropul = (((Integer)args[0]) == 0);
+	} else {
+	    super.uimsg(msg, args);
 	}
     }
 
@@ -152,7 +162,7 @@ public class Inventory extends Widget implements DTarget {
             ItemQuality aq = a.quality.get();
             ItemQuality bq = b.quality.get();
             if (aq != null && bq != null)
-                return (int)Math.signum(aq.average.value - bq.average.value);
+                return (int)Math.signum(aq.quality.value - bq.quality.value);
             if (aq == null)
                 return (bq == null) ? 0 : -1;
             return 1;

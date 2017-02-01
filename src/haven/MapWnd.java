@@ -54,6 +54,7 @@ public class MapWnd extends Window {
     private final Widget toolbar;
     private final Frame viewf, listf;
     private final Button pmbtn, smbtn;
+	private final Button zoomInBtn, zoomOutBtn;
     private TextEntry namesel;
     private GroupSelector colsel;
     private Button mremove;
@@ -94,16 +95,28 @@ public class MapWnd extends Window {
 	list = listf.add(new MarkerList(listf.inner().x, 0));
 	pmbtn = add(new Button(95, "Placed", false) {
 		public void click() {
-		    mflt = pmarkers;
-		    markerseq = -1;
+			mflt = pmarkers;
+			markerseq = -1;
 		}
-	    });
+	});
 	smbtn = add(new Button(95, "Natural", false) {
 		public void click() {
-		    mflt = smarkers;
-		    markerseq = -1;
+			mflt = smarkers;
+			markerseq = -1;
 		}
-	    });
+	});
+
+		zoomInBtn = add(new Button(95, "Zoom In", false) {
+			public void click() {
+				view.zoomIn();
+			}
+		});
+		zoomOutBtn = add(new Button(95, "Zoom Out", false) {
+			public void click() {
+				view.zoomOut();
+			}
+		});
+
 	resize(sz);
     }
 
@@ -277,6 +290,8 @@ public class MapWnd extends Window {
 	list.resize(listf.inner());
 	pmbtn.c = new Coord(sz.x - 200, sz.y - pmbtn.sz.y);
 	smbtn.c = new Coord(sz.x - 95, sz.y - smbtn.sz.y);
+		zoomInBtn.c = new Coord(pmbtn.c.add(0, -35));
+		zoomOutBtn.c = new Coord(smbtn.c.add(0, -35));
 	if(namesel != null) {
 	    namesel.c = listf.c.add(0, listf.sz.y + 10);
 	    if(colsel != null) {

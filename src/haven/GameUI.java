@@ -98,6 +98,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     private final GameUILayout layout;
     private boolean ignoreTrackingSound;
 
+	public static GameUI instance;
+
     public abstract class Belt extends Widget {
 	public Belt(Coord sz) {
 	    super(sz);
@@ -136,6 +138,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     private final Coord minimapc;
 
     public GameUI(String chrid, long plid) {
+		instance = this;
 	this.chrid = chrid;
 	this.plid = plid;
 	setcanfocus(true);
@@ -147,7 +150,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	    chat.resize(chat.savedw, chat.savedh);
 	}
 	beltwdg.raise();
-    eqbelt = add(new EquipBelt("equip", 6, 7));
+    eqbelt = add(new EquipBelt("equip", 6, 7, 5));
     ulpanel = add(new Hidepanel("gui-ul", null, new Coord(-1, -1), false));
     umpanel = add(new Hidepanel("gui-um", null, new Coord( 0, -1), false));
 	urpanel = add(new Hidepanel("gui-ur", null, new Coord( 1, -1), false));
@@ -164,7 +167,15 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		}, new Coord(1, 0), true));
 	Tex lbtnbg = Resource.loadtex("gfx/hud/lbtn-bg");
 	minimapc = new Coord(4, 34 + (lbtnbg.sz().y - 33));
-	menu = brpanel.add(new MenuGrid(), 20, 34);
+	menu = brpanel.add(new MenuGrid() {
+		@Override
+		public boolean use(Glob.Pagina pagina) {
+			boolean result = super.use(pagina);
+			if (result)
+				makewnd.setLastAction(pagina);
+			return result;
+		}
+	}, 20, 34);
 
 	brpanel.add(new Img(Resource.loadtex("gfx/hud/brframe")), 0, 0);
 	menupanel.add(new MainMenu(), 0, 0);
@@ -518,6 +529,15 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	    ntab(p, btn);
 	    btn.tooltip = Text.render(p.cap);
 	}
+
+		@Override
+		public boolean show(boolean show) {
+			if (show) {
+				if (GameUI.instance.buddies != null)
+					GameUI.instance.buddies.clearSearchField();
+			}
+			return super.show(show);
+		}
     }
 
     public static class DraggedItem {
@@ -552,11 +572,20 @@ public class GameUI extends ConsoleHost implements Console.Directory {
             ui.destroy(mmapwnd);
             layout.removeDraggable(mmapwnd);
         }
+		if(mapfile != null) {
+			ui.destroy(mapfile);
+			mapfile = null;
+		}
 		mmap = new LocalMiniMap(Config.minimapSize.get(), map);
 		mmapwnd = new MinimapWnd(Config.minimapPosition.get(), mmap.sz, map, mmap);
         layout.addDraggable(mmapwnd, new RelativePosition(HAlign.Left, VAlign.Top, new Coord(500, 100)), true, true);
 		add(mmapwnd);
 		mmapwnd.pack();
+		if(mmap.cache.save != null) {
+			mapfile = new MapWnd(mmap.cache.save, map, new Coord(700, 500), "Map");
+			mapfile.hide();
+			add(mapfile, 50, 50);
+		}
 	} else if(place == "fight") {
 	    fv = urpanel.add((Fightview)child, 0, 0);
 	} else if(place == "fsess") {
@@ -791,6 +820,13 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	    ui.destroy(help);
 	    help = null;
 	    return;
+	} else if ("show-big-map".equals(msg)) {
+		if((mapfile != null) && mapfile.show(!mapfile.visible)) {
+			mapfile.raise();
+			fitwdg(mapfile);
+			setfocus(mapfile);
+		}
+		return;
 	}
 	super.wdgmsg(sender, msg, args);
     }
@@ -997,7 +1033,12 @@ public class GameUI extends ConsoleHost implements Console.Directory {
         } else if (alt && keycode == KeyEvent.VK_P) {
             Config.showGobPaths.set(!Config.showGobPaths.get());
             return true;
-        }
+        } else if (alt && keycode == KeyEvent.VK_L) {
+			try {
+				ui.cons.run("lo");
+			} catch (Exception e) {}
+			return true;
+		}
     }
 	return(super.globtype(key, ev));
     }

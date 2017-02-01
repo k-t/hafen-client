@@ -458,6 +458,8 @@ public class Material extends GLState {
 	    while(!buf.eom()) {
 		String nm = buf.string();
 		Object[] args = buf.list();
+			if (Config.disableSomeAnimations.get() && Config.disableAnimationsSet.contains(res.name) && nm.equals("texrot"))
+				continue;
 		if(nm.equals("linear")) {
 		    /* XXX: These should very much be removed and
 		     * specified directly in the texture layer

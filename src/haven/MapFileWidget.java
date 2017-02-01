@@ -26,18 +26,13 @@
 
 package haven;
 
-import java.util.*;
-import java.util.function.*;
-import java.awt.Color;
-import java.awt.event.KeyEvent;
-import haven.MapFile.Segment;
-import haven.MapFile.Grid;
-import haven.MapFile.GridInfo;
-import haven.MapFile.Marker;
-import haven.MapFile.PMarker;
-import haven.MapFile.SMarker;
+import haven.MapFile.*;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Objects;
+
 import static haven.MCache.cmaps;
-import static haven.Utils.or;
 
 public class MapFileWidget extends Widget {
     public final MapFile file;
@@ -52,6 +47,9 @@ public class MapFileWidget extends Widget {
     private UI.Grab drag;
     private boolean dragging;
     private Coord dsc, dmc;
+
+	private static int scaleIndex = 0;
+	private static final int[] scaleFactors = new int[]{1, 2, 4, 5, 10};
 
     public MapFileWidget(MapFile file, Coord sz) {
 	super();
@@ -89,7 +87,7 @@ public class MapFileWidget extends Widget {
 	    Segment seg = file.segments.get(info.seg);
 	    if(seg == null)
 		throw(new Loading("No segment info, probably coming soon"));
-	    return(new Location(seg, info.sc.mul(cmaps).add(mc.sub(plg.ul))));
+	    return(new Location(seg, info.sc.mul(cmaps.div(getScaleFactor())).add(mc.sub(plg.ul).div(getScaleFactor()))));
 	}
     }
 
@@ -103,7 +101,7 @@ public class MapFileWidget extends Widget {
 	    Segment seg = file.segments.get(this.seg);
 	    if(seg == null)
 		return(null);
-	    return(new Location(seg, tc));
+	    return(new Location(seg, tc.div(getScaleFactor())));
 	}
     }
 
@@ -151,7 +149,7 @@ public class MapFileWidget extends Widget {
 	    if(grid != cgrid) {
 		if(img != null)
 		    img.cancel();
-		img = Defer.later(() -> new TexI(grid.render(sc.mul(cmaps))));
+		img = Defer.later(() -> new TexI(grid.render(sc.mul(cmaps.div(getScaleFactor())))));
 		cgrid = grid;
 	    }
 	    return((img == null)?null:img.get());
@@ -228,8 +226,8 @@ public class MapFileWidget extends Widget {
 
     private void redisplay(Location loc) {
 	Coord hsz = sz.div(2);
-	Area next = Area.sized(loc.tc.sub(hsz).div(cmaps),
-			       sz.add(cmaps).sub(1, 1).div(cmaps).add(1, 1));
+	Area next = Area.sized(loc.tc.sub(hsz).div(cmaps.div(getScaleFactor())),
+			       sz.add(cmaps.div(getScaleFactor())).sub(1, 1).div(cmaps.div(getScaleFactor())).add(1, 1));
 	if((display == null) || (loc.seg != dseg) || !next.equals(dext)) {
 	    DisplayGrid[] nd = new DisplayGrid[next.rsz()];
 	    if((display != null) && (loc.seg == dseg)) {
@@ -277,14 +275,14 @@ public class MapFileWidget extends Widget {
 	    } catch(Loading l) {
 		continue;
 	    }
-	    Coord ul = hsz.add(c.mul(cmaps)).sub(loc.tc);
-	    g.image(img, ul);
+	    Coord ul = hsz.add(c.mul(cmaps.div(getScaleFactor()))).sub(loc.tc);
+	    g.image(img, ul, cmaps.div(getScaleFactor()));
 	}
 	if((markers == null) || (file.markerseq != markerseq))
 	    remark(loc, dext);
 	if(markers != null) {
 	    for(DisplayMarker mark : markers)
-		mark.draw(g, hsz.sub(loc.tc).add(mark.m.tc));
+		mark.draw(g, hsz.sub(loc.tc).add(mark.m.tc.div(getScaleFactor())));
 	}
     }
 
@@ -309,7 +307,7 @@ public class MapFileWidget extends Widget {
     private DisplayMarker markerat(Coord tc) {
 	if(markers != null) {
 	    for(DisplayMarker mark : markers) {
-		if((mark.hit != null) && mark.hit.contains(tc.sub(mark.m.tc)))
+		if((mark.hit != null) && mark.hit.contains(tc.sub(mark.m.tc.div(getScaleFactor()))))
 		    return(mark);
 	    }
 	}
@@ -324,7 +322,7 @@ public class MapFileWidget extends Widget {
 	    DisplayMarker mark = markerat(tc);
 	    if((mark != null) && clickmarker(mark, button))
 		return(true);
-	    if(clickloc(new Location(curloc.seg, tc), button))
+	    if(clickloc(new Location(curloc.seg, tc.mul(getScaleFactor())), button))
 		return(true);
 	}
 	if(button == 1) {
@@ -369,6 +367,20 @@ public class MapFileWidget extends Widget {
 		return(mark.tip);
 	    }
 	}
-	return(super.tooltip(c, prev));
+		return (super.tooltip(c, prev));
     }
+
+	public static int getScaleFactor() {
+		return scaleFactors[scaleIndex];
+	}
+
+	public void zoomIn() {
+		if (scaleIndex > 0)
+			scaleIndex--;
+	}
+
+	public void zoomOut() {
+		if (scaleIndex < scaleFactors.length - 1)
+			scaleIndex++;
+	}
 }
