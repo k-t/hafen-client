@@ -1033,7 +1033,10 @@ public class GameUI extends ConsoleHost implements Console.Directory {
         } else if (alt && keycode == KeyEvent.VK_P) {
             Config.showGobPaths.set(!Config.showGobPaths.get());
             return true;
-        }
+        } else if (alt && keycode == KeyEvent.VK_L) {
+			act("lo");
+			return true;
+		}
     }
 	return(super.globtype(key, ev));
     }
