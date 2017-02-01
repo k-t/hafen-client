@@ -26,6 +26,8 @@
 
 package haven;
 
+import haven.res.ui.tt.Wear;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -45,6 +47,13 @@ public class WItem extends Widget implements DTarget {
     private Message csdt = Message.nil;
     private Tex meter;
     private int meterValue;
+
+	public static final Color[] wearColors = new Color[]{
+			new Color(233, 0, 14),
+			new Color(218, 128, 87),
+			new Color(246, 233, 87),
+			new Color(145, 225, 60)
+	};
     
     public WItem(GItem item) {
 	super(sqsz);
@@ -239,6 +248,21 @@ public class WItem extends Widget implements DTarget {
         }
         if (drawQuality)
             drawquality(g, quality.get());
+
+		try {
+			for (ItemInfo info : item.info()) {
+				if (info instanceof Wear) {
+					double d = ((Wear) info).d;
+					double m = ((Wear) info).m;
+					double p = (m - d) / m;
+					int h = (int) (p * (double) sz.y);
+					g.chcolor(wearColors[p == 1.0 ? 3 : (int) (p / 0.25)]);
+					g.frect(new Coord(sz.x - 3, sz.y - h), new Coord(3, h));
+					g.chcolor();
+					break;
+				}
+			}
+		} catch (Exception e) {}
 	} else {
 	    g.image(missing.layer(Resource.imgc).tex(), Coord.z, sz);
 	}
